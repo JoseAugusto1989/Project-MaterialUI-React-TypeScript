@@ -42,3 +42,29 @@ npm i json-server
 
 Instalação do Axios para fazer requisições do backend
 npm i axios
+
+# Deploy no github pages
+
+npm install gh-pages --save-dev
+
+# No arquivo package.json, inserir o homepage:
+
+{
+  "name": "my-app",
+  "version": "0.1.0",
++ "homepage": "https://{username}.github.io/{nome-do-repositorio}",
+  "private": true,
+
+# Ainda no arquivo package.json inserir o predeploy:
+
+"scripts": {
++   "predeploy": "npm run build",
++   "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+
+# Fazer um git add, e git push
+
+# Fazer o deploy do app React:
+
+npm run deploy
