@@ -68,3 +68,7 @@ npm install gh-pages --save-dev
 # Fazer o deploy do app React:
 
 npm run deploy
+
+Instalação do unform da Rocktseat, lib para desenvolvimento de formulários React:
+
+npm install @unform/web @unform/core

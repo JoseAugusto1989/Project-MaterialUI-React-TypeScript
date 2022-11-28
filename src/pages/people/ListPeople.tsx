@@ -1,5 +1,7 @@
 import {
   LinearProgress,
+  Icon,
+  IconButton,
   Pagination,
   Paper,
   Table,
@@ -11,19 +13,37 @@ import {
   TableRow,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { IPersonList, PeopleService } from '../../shared/services/api/people/PeopleService';
+import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
+import {
+  IProductList,
+  ProductService,
+  TTotalCountProduct,
+} from '../../shared/services/api/people/ProductService';
+import ProductServiceE from '../../shared/services/api/people/ProductServiceExemple';
+
+type TProductList = {
+  id: number;
+  name: string;
+  salePrice: number;
+  purchasePrice: number;
+  gain: number;
+  quantityInStock: number;
+  addedAmount: number;
+  provider: string;
+};
 
 export const ListPeople: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(3000, false);
+  const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IPersonList[]>([]);
+  const [rows, setRows] = useState<TProductList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,21 +59,35 @@ export const ListPeople: React.FC = () => {
     setIsLoading(true);
 
     debounce(() => {
-      PeopleService.getAll(page, search).then((result) => {
+      ProductService.getAll(page, search).then((result) => {
         setIsLoading(false);
         console.log('TESTING', result);
+        console.log(rows);
 
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          console.log(result);
-
           setTotalCount(result.totalCount);
-          setRows(result.data);
+          setRows(result.data.content);
         }
       });
     });
   }, [search, page]);
+
+  const handleDelete = (id: number) => {
+    if (confirm('Realmente deseja apagar?')) {
+      PeopleService.deleteById(id).then((result) => {
+        if (result instanceof Error) {
+          alert(result.message);
+        } else {
+          setRows((oldRows) => [
+            ...oldRows.filter((oldRow) => oldRow.id !== id),
+          ]);
+          alert('Registro apagado com sucesso!');
+        }
+      });
+    }
+  };
 
   return (
     <LayoutPageBase
@@ -63,7 +97,8 @@ export const ListPeople: React.FC = () => {
           showSearchInput
           newButtonText="Nova"
           searchText={search}
-          changeSearchText={text =>
+          clickInNew={() => navigate('/people/details/new')}
+          changeSearchText={(text) =>
             setSearchParams({ search: text, page: '1' }, { replace: true })
           }
         />
@@ -77,20 +112,34 @@ export const ListPeople: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Identificação</TableCell>
+              <TableCell>Nome Produto</TableCell>
+              <TableCell>Qtd. Estoque</TableCell>
+              <TableCell>Preço de venda</TableCell>
+              <TableCell>Fornecedor</TableCell>
+              <TableCell>Lucro por peça</TableCell>
               <TableCell>Ações</TableCell>
-              <TableCell>Nome completo</TableCell>
-              <TableCell>Email</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {rows.map((row) => (
+            {rows?.map((row) => (
               <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>Ações</TableCell>
-                <TableCell>{row.completeName}</TableCell>
-                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.quantityInStock}</TableCell>
+                <TableCell>R$ {row.salePrice}</TableCell>
+                <TableCell>{row.provider}</TableCell>
+                <TableCell>R$ {row.gain}</TableCell>
+                <TableCell>
+                  <IconButton size="small" onClick={() => handleDelete(row.id)}>
+                    <Icon>delete</Icon>
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => navigate(`/people/details/${row.id}`)}
+                  >
+                    <Icon>edit</Icon>
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -100,18 +149,23 @@ export const ListPeople: React.FC = () => {
           )}
 
           <TableFooter>
-            {(totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES) && (
+            {totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES && (
               <TableRow>
                 <TableCell colSpan={4}>
-                  <Pagination 
+                  <Pagination
                     page={page}
-                    onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                    onChange={(_, newPage) =>
+                      setSearchParams(
+                        { search, page: newPage.toString() },
+                        { replace: true }
+                      )
+                    }
                     count={Math.ceil(totalCount / Environment.LIMIT_OF_LINES)}
                   />
                   <LinearProgress variant="indeterminate" />
                 </TableCell>
               </TableRow>
-            )} 
+            )}
           </TableFooter>
         </Table>
       </TableContainer>

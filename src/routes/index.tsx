@@ -1,7 +1,7 @@
-import { Button } from '@mui/material';
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Dashboard, ListPeople } from '../pages';
+
+import { Dashboard, DetailPeople, ListPeople } from '../pages';
 import { useDrawerContext } from '../shared/contexts';
 
 export const AppRoutes = () => {
@@ -33,8 +33,8 @@ export const AppRoutes = () => {
         element={<ListPeople />}
       />
       <Route
-        path="/people/detail/:id"
-        element={<ListPeople />}
+        path="/people/details/:id"
+        element={<DetailPeople />}
       />
       <Route path="*" element={<Navigate to={'initial-page'} />} />
     </Routes>

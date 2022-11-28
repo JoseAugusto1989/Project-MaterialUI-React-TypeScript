@@ -1,18 +1,18 @@
-import { Environment } from './../../../environments/index';
+import { Environment } from '../../../environments/index';
 import { API } from '../axios-config';
 
 export interface IPersonList {
     id: number;
     completeName: string;
     email: string;
-    cidadeId: number;
+    cityId: number;
 }
 
 export interface IPersonDetail {
     id: number;
     completeName: string;
     email: string;
-    cidadeId: number;
+    cityId: number;
 }
 
 type TTotalCountPerson = {
@@ -57,7 +57,7 @@ const getById = async (id: number): Promise<IPersonDetail | Error> => {
 
 const create = async (dados: Omit<IPersonDetail, 'id'>): Promise<number | Error> => {
   try {
-    const { data } = await API.post<IPersonDetail>('/people', dados);
+    const { data } = await API.post<IPersonDetail>('/people/addPeople', dados);
     
     if (data) {
       return data.id;
@@ -83,6 +83,7 @@ const updateById = async (id: number, dados: IPersonDetail): Promise<void | Erro
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
     await API.delete(`/people/${id}`);
+    console.log('Teste de delete');
        
   } catch (error) {
     console.error(error);
