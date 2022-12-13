@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailTools } from '../../shared/components';
+import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { VTextField } from '../../shared/forms';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
@@ -58,13 +59,15 @@ export const DetailPeople: React.FC = () => {
         }
       });
     } else {
-      PeopleService.updateById(Number(id), { id: Number(id), ...dados }).then((result) => {
-        setIsLoading(false);
+      PeopleService.updateById(Number(id), { id: Number(id), ...dados }).then(
+        (result) => {
+          setIsLoading(false);
 
-        if (result instanceof Error) {
-          alert(result.message);
-        } 
-      });
+          if (result instanceof Error) {
+            alert(result.message);
+          }
+        }
+      );
     }
   };
 
@@ -82,29 +85,31 @@ export const DetailPeople: React.FC = () => {
   };
 
   return (
-    <LayoutPageBase
-      title={id === 'new' ? 'Nova pessoa' : name}
-      toolbar={
-        <DetailTools
-          textButtonNew="Nova"
-          showButtonSaveAndClose
-          showButtonNew={id !== 'new'}
-          showButtonDelete={id !== 'new'}
-          toClickInSave={() => formRef.current?.submitForm()}
-          toClickInSaveAndClose={() => formRef.current?.submitForm()}
-          toClickInDelete={() => handleDelete(Number(id))}
-          toClickInNew={() => navigate('/people/detail/new')}
-          toClickInBack={() => navigate('/people')}
-        />
-      }
-    >
-      <Form ref={formRef} onSubmit={handleSave}>
-        <VTextField label="Nome completo" name="completeName" />
+    <LateralMenu>
+      <LayoutPageBase
+        title={id === 'new' ? 'Nova pessoa' : name}
+        toolbar={
+          <DetailTools
+            textButtonNew="Nova"
+            showButtonSaveAndClose
+            showButtonNew={id !== 'new'}
+            showButtonDelete={id !== 'new'}
+            toClickInSave={() => formRef.current?.submitForm()}
+            toClickInSaveAndClose={() => formRef.current?.submitForm()}
+            toClickInDelete={() => handleDelete(Number(id))}
+            toClickInNew={() => navigate('/people/detail/new')}
+            toClickInBack={() => navigate('/people')}
+          />
+        }
+      >
+        <Form ref={formRef} onSubmit={handleSave}>
+          <VTextField label="Nome completo" name="completeName" />
 
-        <VTextField label="Email" name="email" />
+          <VTextField label="Email" name="email" />
 
-        <VTextField label="Cidade id" name="cityId" />
-      </Form>
-    </LayoutPageBase>
+          <VTextField label="Cidade id" name="cityId" />
+        </Form>
+      </LayoutPageBase>
+    </LateralMenu>
   );
 };

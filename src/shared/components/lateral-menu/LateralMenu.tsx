@@ -16,7 +16,7 @@ import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useAppThemeContext, useDrawerContext } from '../../contexts';
 
 interface LateralMenuProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 interface IListItemLinkProps {

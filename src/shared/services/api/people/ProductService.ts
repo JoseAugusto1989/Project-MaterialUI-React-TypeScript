@@ -25,6 +25,7 @@ const getAll = async (
   try {
     const urlRelative = `/product/getAllProduct?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&completeName_like=${filter}`;
     const { data, headers } = await API.get(urlRelative);
+
     if (data) {
       return {
         data,
@@ -41,6 +42,22 @@ const getAll = async (
   }
 };
 
+const getById = async (id: number): Promise<TTotalCountProduct | Error> => {
+  try {
+    const { data } = await API.get(`/product/${id}`);
+
+    if (data) {
+      return data;
+    }
+
+    return new Error('Erro as consultar o registro');
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao criar o registro');
+  }
+};
+
 export const ProductService = {
   getAll,
+  getById
 };

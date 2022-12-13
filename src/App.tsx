@@ -13,11 +13,7 @@ function App() {
     <AppThemeProvider>
       <DrawerProvider>
         <BrowserRouter>
-
-          <LateralMenu>
-            <AppRoutes />
-          </LateralMenu>
-          
+          <AppRoutes />
         </BrowserRouter>
       </DrawerProvider>
     </AppThemeProvider>

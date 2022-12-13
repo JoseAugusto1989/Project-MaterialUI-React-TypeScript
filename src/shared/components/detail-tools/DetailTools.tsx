@@ -13,12 +13,14 @@ import { Theme } from '@mui/system';
 
 interface IDetailToolsProps {
   textButtonNew?: string;
+  textButtonLogout?: string;
   showButtonNew?: boolean;
   showButtonBack?: boolean;
   showButtonDelete?: boolean;
   showButtonSave?: boolean;
   showButtonSaveAndClose?: boolean;
 
+  showButtonLogout?: boolean;
   showButtonSaveLoading?: boolean;
   showButtonNewLoading?: boolean;
   showButtonBackLoading?: boolean;
@@ -29,17 +31,20 @@ interface IDetailToolsProps {
   toClickInBack?: () => void;
   toClickInDelete?: () => void;
   toClickInSave?: () => void;
+  toClickInLogout?: () => void;
   toClickInSaveAndClose?: () => void;
 }
 
 export const DetailTools = ({
   textButtonNew = 'Novo',
+  textButtonLogout = 'Logout',
   showButtonNew = true,
   showButtonBack = true,
   showButtonDelete = true,
   showButtonSave = true,
   showButtonSaveAndClose = false,
 
+  showButtonLogout = false,
   showButtonSaveLoading = false,
   showButtonNewLoading = false,
   showButtonBackLoading = false,
@@ -49,6 +54,7 @@ export const DetailTools = ({
   toClickInBack,
   toClickInDelete,
   toClickInNew,
+  toClickInLogout,
   toClickInSave,
   toClickInSaveAndClose,
 }: IDetailToolsProps) => {
