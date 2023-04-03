@@ -1,22 +1,26 @@
 /* eslint-disable react/react-in-jsx-scope */
 import './App.css';
+import './shared/forms/TranslateYup';
 
 import { BrowserRouter } from 'react-router-dom';
 
 import { AppRoutes } from './routes';
+import { AuthProvider, DrawerProvider } from './shared/contexts';
 import { AppThemeProvider } from './shared/contexts/ThemeContext';
-import LateralMenu from './shared/components/lateral-menu/LateralMenu';
-import { DrawerProvider } from './shared/contexts';
 
 function App() {
   return (
-    <AppThemeProvider>
-      <DrawerProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </DrawerProvider>
-    </AppThemeProvider>
+    <AuthProvider>
+      <AppThemeProvider>
+        
+        <DrawerProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </DrawerProvider>
+        
+      </AppThemeProvider>
+    </AuthProvider>
   );
 }
 

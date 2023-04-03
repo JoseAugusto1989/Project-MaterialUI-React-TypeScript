@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
-  Box,
-  Button,
   Icon,
   IconButton,
   LinearProgress,
-  Pagination,
   Modal,
+  Pagination,
   Paper,
   Table,
   TableBody,
@@ -15,40 +13,18 @@ import {
   TableFooter,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
-import {
-  Container,
-  ContainerInput,
-  ContainerText,
-} from '../../shared/components/modals/EditModal.styles';
-import { Input } from '../../shared/components/modals/InputEditModal';
+import { ProductModal } from '../../shared/components/modals/modal/ProductModal';
 import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
-import {
-  IProductList,
-  ProductService,
-} from '../../shared/services/api/people/ProductService';
-import ProductServiceE from '../../shared/services/api/people/ProductServiceExemple';
-
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'white',
-  border: '2px solid #000',
-  boxShadow: 12,
-  p: 20,
-};
+import { IProductList, ProductServiceJsonServer } from '../../shared/services/api/product/ProductServiceJsonServer';
+import usePagination from './helpers/Pagination';
 
 export const ListProduct: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -57,34 +33,40 @@ export const ListProduct: React.FC = () => {
   const [rows, setRows] = useState<IProductList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [size, setSize] = useState(10);
+  const [page, setPage] = useState(1);
+  
+  const count = Math.ceil(totalCount / Environment.LIMIT_OF_LINES);
+  const _DATA = usePagination(rows, Environment.LIMIT_OF_LINES);
+
+  const handleChange = (e: any, p: number) => {
+    setPage(p);
+    _DATA.jump(p);
+  };
 
   const search = useMemo(() => {
     return searchParams.get('search') || '';
-  }, [searchParams]);
-
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
   }, [searchParams]);
 
   useEffect(() => {
     setIsLoading(true);
 
     debounce(() => {
-      ProductService.getAll(page, search).then((result) => {
+      ProductServiceJsonServer.getAll(page, search).then((result) => {
         setIsLoading(false);
-        console.log('TESTING', result);
         console.log(rows);
 
         if (result instanceof Error) {
           alert(result.message);
+
         } else {
+          console.log(result);
           setTotalCount(result.totalCount);
-          setRows(result.data.content);
+          setRows(result.data);
         }
       });
     });
@@ -92,9 +74,10 @@ export const ListProduct: React.FC = () => {
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      PeopleService.deleteById(id).then((result) => {
+      ProductServiceJsonServer.deleteById(id).then((result) => {
         if (result instanceof Error) {
           alert(result.message);
+
         } else {
           setRows((oldRows) => [
             ...oldRows.filter((oldRow) => oldRow.id !== id),
@@ -112,11 +95,11 @@ export const ListProduct: React.FC = () => {
         toolbar={
           <ListTools
             showSearchInput
-            newButtonText="Nova"
+            newButtonText="Novo"
             searchText={search}
-            clickInNew={() => navigate('/people/details/new')}
+            clickInNew={() => navigate('/product/details/new')}
             changeSearchText={(text) =>
-              setSearchParams({ search: text, page: '1' }, { replace: true })
+              setSearchParams({ search: text }, { replace: true })
             }
           />
         }
@@ -142,7 +125,21 @@ export const ListProduct: React.FC = () => {
               {rows?.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.quantityInStock}</TableCell>
+                  {row.quantityInStock < 10 && (
+                    <TableCell
+                      style={{
+                        backgroundColor: '#faeaea',
+                        color: 'red',
+                        fontSize: '18px',
+                        borderColor: '#d4caca',
+                      }}
+                    >
+                      {row.quantityInStock}
+                    </TableCell>
+                  )}
+                  {row.quantityInStock >= 10 && (
+                    <TableCell>{row.quantityInStock}</TableCell>
+                  )}
                   <TableCell>R$ {row.salePrice}</TableCell>
                   <TableCell>{row.provider}</TableCell>
                   <TableCell>R$ {row.gain}</TableCell>
@@ -153,46 +150,25 @@ export const ListProduct: React.FC = () => {
                     >
                       <Icon>delete</Icon>
                     </IconButton>
+
                     <IconButton
                       size="small"
-                      // TODO: fazer uma validação para a Qtd. Estoque ficar vermelho quando
-                      // a qtd for menor que 10
-                      onClick={handleOpen}
+                      // handleOpen
+                      onClick={() => navigate(`/product/details/${row.id}`)}
                     >
                       <Icon>edit</Icon>
                     </IconButton>
+
+                    { row.quantityInStock < 10 && (<IconButton size="small">
+                      <Icon>message</Icon>
+                    </IconButton>)}
                     <Modal
                       open={open}
                       onClose={handleClose}
                       aria-labelledby="modal-modal-title"
                       aria-describedby="modal-modal-description"
                     >
-                      <Box sx={style}>
-                        <Typography variant="h3">
-                          <ContainerText>Atualização de Produtos</ContainerText>
-                        </Typography>
-                        <Typography sx={{ mt: 2 }}>
-                          <Container>
-                            <ContainerInput>
-                              <Input label="Nome do Produto" />
-                              <Input label="Qtd. em Estoque" />
-                            </ContainerInput>
-
-                            <ContainerInput>
-                              <Input label="Preço de Venda" />
-                              <Input label="Fornecedor" />
-                            </ContainerInput>
-                            <ContainerInput>
-                              <Input label="Preço de Compra" />
-                              <Input label="Qtd. para Acionar" />
-                            </ContainerInput>
-                            <ContainerInput>
-                              <Button variant="outlined">Limpar</Button>
-                              <Button variant="contained">Confirmar</Button>
-                            </ContainerInput>
-                          </Container>
-                        </Typography>
-                      </Box>
+                      <ProductModal />
                     </Modal>
                   </TableCell>
                 </TableRow>
@@ -215,16 +191,14 @@ export const ListProduct: React.FC = () => {
               )}
 
               <TableRow>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={6}>
                   <Pagination
+                    count={count}
+                    size="large"
                     page={page}
-                    onChange={(_, newPage) =>
-                      setSearchParams(
-                        { search, page: newPage.toString() },
-                        { replace: true }
-                      )
-                    }
-                    count={Math.ceil(totalCount / Environment.LIMIT_OF_LINES)}
+                    variant="text"
+                    shape="rounded"
+                    onChange={handleChange}
                   />
                 </TableCell>
               </TableRow>

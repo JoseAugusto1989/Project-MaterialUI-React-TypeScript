@@ -21,7 +21,6 @@ import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
-import { ProductService } from '../../shared/services/api/people/ProductService';
 import { ProviderService } from '../../shared/services/api/people/ProviderService';
 
 type IProviderList = {

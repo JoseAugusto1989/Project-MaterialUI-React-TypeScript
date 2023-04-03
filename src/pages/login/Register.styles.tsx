@@ -1,27 +1,41 @@
 import styled from 'styled-components';
 
+export const Body = styled.body`
+  background-color: #484747;
+`;
+
 export const ContainerMain = styled.div`
   display: flex;
   text-align: center;
   border-radius: 8px;
-  padding: 180px 360px 0 360px;
+  padding: 40px 360px 0 360px;
   @media (max-width: 1100px) {
-    padding: 180px 0 0 0;
+    padding: 140px 0 0 0;
   }
   @media (max-width: 600px) {
     width: 100%;
     flex-direction: column;
-    padding: 40px 0 0 0;
+    padding: 20px 0 0 0;
   }
   @media (max-width: 400px) {
     width: 20%;
     flex-direction: column;
-    padding: 40px 0 0 0;
+    padding: 20px 0 0 0;
   }
 `;
 
+export const ContainerRegister = styled.div`
+  background-color: white;
+  display: block;
+  text-align: center;
+  border-radius: 8px 8px 8px 8px;
+  border: 1px solid #000000;
+  box-shadow: 2px 2px 10px;
+  padding: 100px 100px 100px 100px;
+`;
+
 export const TextContainerLeft = styled.h2`
-  margin-top: 30px;
+  margin-top: 0px;
   font-size: 16px;
   line-height: 50px;
   text-align: center;
@@ -94,4 +108,32 @@ export const LetterLogo = styled.h1`
   color: white;
   letter-spacing: -2px;
   text-align: center;
+`;
+
+export const Input = styled.input`
+  background: #e8e8e8;
+  border: none;
+  font-size: 20px;
+  width: 80%;
+  height: 60px;
+  color: #747373;
+  outline: 0;
+  border-radius: 8px;
+  text-align: center;
+`;
+
+export const Select = styled.select`
+  background: #e8e8e8;
+  border: none;
+  font-size: 20px;
+  width: 80%;
+  height: 60px;
+  color: #747373;
+  outline: 0;
+  border-radius: 8px;
+  text-align: center;
+`;
+
+export const ContainerDark = styled.div`
+  background-color: '#484747';
 `;

@@ -23,7 +23,7 @@ const getAll = async (
   filter = ''
 ): Promise<TTotalCountProduct | Error> => {
   try {
-    const urlRelative = `/product/getAllProduct?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&completeName_like=${filter}`;
+    const urlRelative = `/product/getAllProduct?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&name=${filter}`;
     const { data, headers } = await API.get(urlRelative);
 
     if (data) {
@@ -57,7 +57,46 @@ const getById = async (id: number): Promise<TTotalCountProduct | Error> => {
   }
 };
 
+const create = async (dados: Omit<IProductList, 'id'>): Promise<number | Error> => {
+  try {
+    const { data } = await API.post<IProductList>('/product/addProduct', dados);
+    
+    if (data) {
+      return data.id;
+    }
+    return new Error('Erro ao criar o registro!');
+    
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao criar o registro!');
+  }
+};
+
+const updateById = async (id: number, dados: IProductList): Promise<void | Error> => {
+  try {
+    await API.put(`/product/${id}`, dados);
+   
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao atualizar o registro!');
+  }
+};
+
+
+const deleteById = async (id: number): Promise<void | Error> => {
+  try {
+    await API.delete(`/product/${id}`);
+
+  } catch (error) {
+    console.error(error);
+    return new Error((error as { message: string }).message || 'Erro ao apagar o produto');
+  }
+};
+
 export const ProductService = {
   getAll,
-  getById
+  getById,
+  deleteById,
+  create,
+  updateById
 };

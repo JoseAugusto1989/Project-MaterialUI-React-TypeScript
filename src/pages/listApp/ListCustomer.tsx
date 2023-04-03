@@ -20,54 +20,48 @@ import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { CustomerService } from '../../shared/services/api/people/CustomerService';
+import { CustomerServiceJsonServer, ICustomerList } from '../../shared/services/api/customer/CustomerServiceJsonServer';
 import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
-
-type TCustomerList = {
-  id: number;
-  name: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  cpf: string;
-  occupation: string;
-  number: number;
-  district: string;
-  city: string;
-};
+import usePagination from './helpers/Pagination';
 
 export const ListCustomer: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(3000, false);
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<TCustomerList[]>([]);
+  const [page, setPage] = useState(1);
+  const [rows, setRows] = useState<ICustomerList[]>([]);
+  const _DATA = usePagination(rows, Environment.LIMIT_OF_LINES);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleChange = (e: any, p: number) => {
+    setPage(p);
+    _DATA.jump(p);
+  };
 
   const search = useMemo(() => {
     return searchParams.get('search') || '';
   }, [searchParams]);
 
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
-  }, [searchParams]);
+  // const page = useMemo(() => {
+  //   return Number(searchParams.get('page') || '1');
+  // }, [searchParams]);
 
   useEffect(() => {
     setIsLoading(true);
 
     debounce(() => {
-      CustomerService.getAll(page, search).then((result) => {
+      CustomerServiceJsonServer.getAll(page, search).then((result) => {
         setIsLoading(false);
-        console.log('TESTING', result);
+        console.log(result);
         console.log(rows);
 
         if (result instanceof Error) {
           alert(result.message);
         } else {
           setTotalCount(result.totalCount);
-          setRows(result.data.content);
+          setRows(result.data);
         }
       });
     });
@@ -91,15 +85,15 @@ export const ListCustomer: React.FC = () => {
   return (
     <LateralMenu>
       <LayoutPageBase
-        title="Listagem de produtos"
+        title="Listagem de Clientes"
         toolbar={
           <ListTools
             showSearchInput
-            newButtonText="Nova"
+            newButtonText="Novo"
             searchText={search}
-            clickInNew={() => navigate('/people/details/new')}
+            clickInNew={() => navigate('/customer/details/new')}
             changeSearchText={(text) =>
-              setSearchParams({ search: text, page: '1' }, { replace: true })
+              setSearchParams({ search: text }, { replace: true })
             }
           />
         }
@@ -114,7 +108,7 @@ export const ListCustomer: React.FC = () => {
               <TableRow>
                 <TableCell>Nome</TableCell>
                 <TableCell>Sobrenome</TableCell>
-                <TableCell>CPF</TableCell>
+                <TableCell>CPF / CNPJ</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Telefone</TableCell>
                 <TableCell>Ações</TableCell>
@@ -138,9 +132,16 @@ export const ListCustomer: React.FC = () => {
                     </IconButton>
                     <IconButton
                       size="small"
-                      onClick={() => navigate(`/people/details/${row.id}`)}
+                      onClick={() => navigate(`/customer/details/${row.id}`)}
                     >
                       <Icon>edit</Icon>
+                    </IconButton>
+
+                    <IconButton 
+                      size='small'
+                      // onClick={}
+                    >
+                      <Icon>message</Icon>
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -152,17 +153,24 @@ export const ListCustomer: React.FC = () => {
             )}
 
             <TableFooter>
+
+              {isLoading && (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <LinearProgress variant="indeterminate" />
+                  </TableCell>
+                </TableRow>
+              )}
+
               {totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES && (
                 <TableRow>
-                  <TableCell colSpan={4}>
+                  <TableCell colSpan={6}>
                     <Pagination
                       page={page}
-                      onChange={(_, newPage) =>
-                        setSearchParams(
-                          { search, page: newPage.toString() },
-                          { replace: true }
-                        )
-                      }
+                      size='large'
+                      variant='text'
+                      shape='rounded'
+                      onChange={handleChange}
                       count={Math.ceil(totalCount / Environment.LIMIT_OF_LINES)}
                     />
                     <LinearProgress variant="indeterminate" />

@@ -2,7 +2,7 @@ export const Environment = {
   /**
    * Define a quantidade de linhas a ser carregada por padrão nas listagens
    */
-  LIMIT_OF_LINES: 5,
+  LIMIT_OF_LINES: 12,
   /**
    * Placeholder exibido nos inputs
    */
@@ -13,6 +13,9 @@ export const Environment = {
   EMPTY_LIST: 'Nenhum registro encontrado.',
   /**
    * Url base de consulta dos dados dessa aplicação
+   * Esta URL é do Json-server
+   * 'http://localhost:8090'
    */
-  URL_BASE: 'http://localhost:8090',
+  URL_BASE: 'http://localhost:3333',
+
 };

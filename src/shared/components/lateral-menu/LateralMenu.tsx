@@ -13,8 +13,7 @@ import {
 import { Box } from '@mui/system';
 import React from 'react';
 import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
-import { useAppThemeContext, useDrawerContext } from '../../contexts';
-
+import { useAppThemeContext, useAuthContext, useDrawerContext } from '../../contexts';
 interface LateralMenuProps {
   children?: React.ReactNode;
 }
@@ -54,6 +53,12 @@ const LateralMenu: React.FC<LateralMenuProps> = ({ children }) => {
 
   const { isDrawerOpen, drawerOptions, toggleDrawerOpen } = useDrawerContext();
   const { toggleTheme } = useAppThemeContext();
+  // const { logout } = useAuthContext();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    navigate('/register');
+  };
 
   return (
     <>
@@ -76,6 +81,7 @@ const LateralMenu: React.FC<LateralMenuProps> = ({ children }) => {
             justifyContent="center"
           >
             <Avatar
+              src=""
               sx={{ height: theme.spacing(16), width: theme.spacing(16) }}
             />
           </Box>
@@ -103,6 +109,13 @@ const LateralMenu: React.FC<LateralMenuProps> = ({ children }) => {
                   <Icon>dark_mode</Icon>
                 </ListItemIcon>
                 <ListItemText primary='Alternar tema' />
+              </ListItemButton>
+
+              <ListItemButton onClick={logout}>
+                <ListItemIcon>
+                  <Icon>logout</Icon>
+                </ListItemIcon>
+                <ListItemText primary='Sair' />
               </ListItemButton>
             </List>
           </Box>

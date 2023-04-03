@@ -3,6 +3,4 @@
 1. Abra uma nova aba no terminal
 2. Execute o seguinte comando:
 
-json-server -w -p 3333 ./mock/database.json
-ou
-npm run json-server -w -p 3333 ./mock/database.json
+json-server -w -p 3333 ./mock/databaseProduct.json

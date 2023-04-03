@@ -1,15 +1,6 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Icon,
-  Skeleton,
-  Typography,
-  Paper,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, Button, Divider, Icon, Paper, Skeleton, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Theme } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 interface IDetailToolsProps {
   textButtonNew?: string;
@@ -44,7 +35,6 @@ export const DetailTools = ({
   showButtonSave = true,
   showButtonSaveAndClose = false,
 
-  showButtonLogout = false,
   showButtonSaveLoading = false,
   showButtonNewLoading = false,
   showButtonBackLoading = false,
@@ -62,10 +52,16 @@ export const DetailTools = ({
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const theme = useTheme();
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/login');
+  };
+
   return (
     <Box
-      height={theme.spacing(5)}
-      gap={1}
+      height={theme.spacing(6)}
+      gap={2}
       marginX={1}
       padding={1}
       paddingX={2}
@@ -73,6 +69,7 @@ export const DetailTools = ({
       display="flex"
       alignItems="center"
     >
+      
       {showButtonSave && !showButtonSaveLoading && (
         <Button
           color="primary"
@@ -190,7 +187,6 @@ export const DetailTools = ({
           </Typography>
         </Button>
       )}
-
       {showButtonBackLoading && <Skeleton width={110} height={60} />}
     </Box>
   );

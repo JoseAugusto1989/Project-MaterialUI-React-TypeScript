@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import {
-  Dashboard,
-  DetailPeople,
-  ListCustomer,
-  ListProduct,
-  ListProvider,
-} from '../pages';
-import Login from '../pages/login/Login';
-import LateralMenu from '../shared/components/lateral-menu/LateralMenu';
+import { Dashboard, DetailCustomer, ListCustomer, ListProduct, ListProvider, Register } from '../pages';
+import { DetailProduct } from '../pages/listApp/DetailProduct';
+import { ListEmployee } from '../pages/listApp/LIstEmployee';
+import { NewRegister } from '../pages/login/NewRegister';
 import { useDrawerContext } from '../shared/contexts';
 
 export const AppRoutes = () => {
-  const { toggleDrawerOpen, setDrawerOptions } = useDrawerContext();
+  const { setDrawerOptions } = useDrawerContext();
 
   useEffect(() => {
     setDrawerOptions([
@@ -38,22 +33,37 @@ export const AppRoutes = () => {
         icon: 'article',
       },
       {
+        label: 'Funcionarios',
+        // TODO: desenvolver cadastro de funcionario
+        path: '/employee',
+        icon: 'people',
+      },
+      {
         label: 'Vendas',
         path: '/provider',
         icon: 'article',
       },
+      {
+        label: 'Relatórios Vendas',
+        path: '/report',
+        icon: '',
+      }
     ]);
   }, []);
 
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/initial-page" element={<Dashboard />} />
+      <Route path="/newLogin" element={<NewRegister />} />
       <Route path="/product" element={<ListProduct />} />
       <Route path="/customer" element={<ListCustomer />} />
       <Route path="/provider" element={<ListProvider />} />
-      <Route path="/people/details/:id" element={<DetailPeople />} />
-      <Route path="*" element={<Navigate to={'initial-page'} />} />
+      <Route path="/employee" element={<ListEmployee />} />
+      <Route path="/product/details/:id" element={<DetailProduct />} />
+      <Route path="/customer/details/:id" element={<DetailCustomer />} />
+      {/* <Route path="/provider/details/:id" element={<DetailProvider />} /> */}
+      <Route path="*" element={<Navigate to={'/register'} />} />
     </Routes>
   );
 };

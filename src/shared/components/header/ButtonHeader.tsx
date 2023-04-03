@@ -7,6 +7,3 @@ const Button = styled.button`
   width: 150px;
 `;
 
-export const ButtonLogout = () => {
-  return <Button>Logout</Button>;
-};

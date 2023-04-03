@@ -14,6 +14,7 @@ type PageableItem = {
 };
 
 export type Pageable<T> = {
+  map(arg0: (opt: any) => { id: any; label: any; '': any; }): import('react').SetStateAction<{ id: number; label: string; }[]>;
   content: T[];
   pageable: PageableItem;
   totalElements: number;

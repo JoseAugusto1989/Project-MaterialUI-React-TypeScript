@@ -1,0 +1,343 @@
+{
+  "product": [
+    {
+      "id": 1,
+      "name": "Antonio Carlos dos Santos",
+      "salePrice": 22.5,
+      "purchasePrice": 18,
+      "gain": 4.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 2,
+      "name": "Cristiano Santos",
+      "salePrice": 22.5,
+      "purchasePrice": 18,
+      "gain": 4.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "name": "Tadeu Mello teste",
+      "quantityInStock": 10,
+      "salePrice": 10.5,
+      "provider": "Teste Fornecedor",
+      "purchasePrice": 8,
+      "addedAmount": 15,
+      "id": 3
+    },
+    {
+      "name": "Marcio Souza 2",
+      "quantityInStock": 8,
+      "salePrice": 8.5,
+      "provider": "Teste Fornecedor 2",
+      "purchasePrice": 6,
+      "addedAmount": 10,
+      "id": 4
+    },
+    {
+      "id": 5,
+      "name": "Paulo Dantas",
+      "salePrice": 120,
+      "purchasePrice": 90,
+      "gain": 30,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "Yamaha"
+    },
+    {
+      "id": 6,
+      "name": "João Santos",
+      "salePrice": 12.5,
+      "purchasePrice": 10,
+      "gain": 2.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 7,
+      "name": "João Santos",
+      "salePrice": 12.5,
+      "purchasePrice": 10,
+      "gain": 2.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 8,
+      "name": "Cristiano Santos",
+      "salePrice": 22.5,
+      "purchasePrice": 18,
+      "gain": 4.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 9,
+      "name": "Tadeu Mello",
+      "salePrice": 10.5,
+      "purchasePrice": 8,
+      "gain": 2.5,
+      "quantityInStock": 10,
+      "addedAmount": 15,
+      "provider": "Teste Fornecedor"
+    },
+    {
+      "name": "Marcio Souza",
+      "quantityInStock": 8,
+      "salePrice": 8.5,
+      "provider": "Teste Fornecedor",
+      "purchasePrice": 6,
+      "addedAmount": 10,
+      "id": 10
+    },
+    {
+      "id": 11,
+      "name": "Paulo Dantas",
+      "salePrice": 120,
+      "purchasePrice": 90,
+      "gain": 30,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "Yamaha"
+    },
+    {
+      "id": 12,
+      "name": "João Santos",
+      "salePrice": 12.5,
+      "purchasePrice": 10,
+      "gain": 2.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 13,
+      "name": "Paulo Dantas",
+      "salePrice": 120,
+      "purchasePrice": 90,
+      "gain": 30,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "Yamaha"
+    },
+    {
+      "id": 14,
+      "name": "João Santos",
+      "salePrice": 12.5,
+      "purchasePrice": 10,
+      "gain": 2.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "id": 15,
+      "name": "Marcon Paulo",
+      "salePrice": 120,
+      "purchasePrice": 90,
+      "gain": 30,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "Yamaha"
+    },
+    {
+      "id": 16,
+      "name": "José Augusto",
+      "salePrice": 12.5,
+      "purchasePrice": 10,
+      "gain": 2.5,
+      "quantityInStock": 20,
+      "addedAmount": 25,
+      "provider": "João Teste"
+    },
+    {
+      "name": "Batatinha teste",
+      "quantityInStock": "12",
+      "salePrice": "32.50",
+      "provider": "Zé do gás",
+      "purchasePrice": "28,60",
+      "addedAmount": "20",
+      "id": 17
+    },
+    {
+      "name": "Beterraba teste",
+      "quantityInStock": "32",
+      "salePrice": "12.90",
+      "provider": "Romualdo",
+      "purchasePrice": "9.00",
+      "addedAmount": "32",
+      "id": 18
+    },
+    {
+      "name": "Maracuja teste",
+      "quantityInStock": "0",
+      "salePrice": "23",
+      "provider": "Zé Arlindo",
+      "purchasePrice": "16",
+      "addedAmount": "42",
+      "id": 19
+    },
+    {
+      "name": "teste",
+      "quantityInStock": "0",
+      "salePrice": "12",
+      "provider": "Teste Func",
+      "purchasePrice": "10",
+      "addedAmount": "32",
+      "id": 20
+    },
+    {
+      "name": "Laranja Suiça",
+      "quantityInStock": "22",
+      "salePrice": "8",
+      "provider": "Teste",
+      "purchasePrice": "6.5",
+      "addedAmount": "12",
+      "id": 21
+    },
+    {
+      "name": "Maça ",
+      "quantityInStock": "12",
+      "salePrice": "12",
+      "provider": "Teste",
+      "purchasePrice": "10",
+      "addedAmount": "12",
+      "id": 22
+    },
+    {
+      "name": "teste",
+      "quantityInStock": "0",
+      "salePrice": "12",
+      "provider": "Teste Func",
+      "purchasePrice": "10",
+      "addedAmount": "32",
+      "id": 23
+    },
+    {
+      "name": "Laranja Suiça",
+      "quantityInStock": "22",
+      "salePrice": "8",
+      "provider": "Teste",
+      "purchasePrice": "6.5",
+      "addedAmount": "12",
+      "id": 24
+    },
+    {
+      "name": "Maça ",
+      "quantityInStock": "12",
+      "salePrice": "12",
+      "provider": "Teste",
+      "purchasePrice": "10",
+      "addedAmount": "12",
+      "id": 25
+    }
+  ],
+  "customer": [
+    {
+      "id": 1,
+      "name": "João Carlos",
+      "lastName": "Lopes",
+      "email": "jCarlos@gmail.com",
+      "phone": "35 - 99989 8989",
+      "address": "Rua João Nunes de Oliveira",
+      "number": 316,
+      "district": "Foch",
+      "cpf": "10898789809",
+      "occupation": "Estudante",
+      "city": "Pouso Alegre",
+      "state": "MG"
+    },
+    {
+      "id": 2,
+      "name": "Marcelo",
+      "lastName": "Campos",
+      "email": "marcelo_campos@gmail.com",
+      "phone": "35 - 99989 5589",
+      "address": "Rua João Nunes de Oliveira",
+      "number": 316,
+      "district": "Foch",
+      "cpf": "10898789809",
+      "occupation": "Professor",
+      "city": "Pouso Alegre",
+      "state": "MG"
+    },
+    {
+      "state": "Minas Gerais",
+      "city": "Pouso Alegre",
+      "district": "Centro",
+      "number": 12,
+      "occupation": "Vendedor",
+      "cpf": "122",
+      "address": "Rua teste",
+      "phone": "35998739028",
+      "email": "joliveirapins.jaop@gmail.com",
+      "id": 3,
+      "lastName": "Guto",
+      "name": "Jose Augusto",
+      "cnpj": "122"
+    }
+  ],
+  "provider": [
+    {
+      "id": 1,
+      "name": "Pedro",
+      "lastName": "Alcantara",
+      "phone": "35 - 99989 5589",
+      "email": "pedroAlcantara@gmail.com",
+      "companyName": "Yamaha",
+      "cnpj": "82.382.300/7083-79"
+    },
+    {
+      "id": 2,
+      "name": "Carlos",
+      "lastName": " Roberto de Alcantara",
+      "phone": "35 - 99449 4389",
+      "email": "carlosRoberto@gmail.com",
+      "companyName": "Honda",
+      "cnpj": "81.382.456/4553-79"
+    }
+  ],
+  "employee": [
+    {
+      "id": 1,
+      "name": "João"
+    },
+    {
+      "id": 2,
+      "name": "Marcos"
+    },
+    {
+      "id": 3,
+      "name": "Paulo Victor"
+    },
+    {
+      "id": 4,
+      "name": "Marcia"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "José Augusto de Oliveira Pins",
+      "email": "joliveirapins@yahoo.com",
+      "password": "12345678",
+      "occupation": "Estudante",
+      "active": true
+    },
+    {
+      "id": 2,
+      "name": "João Carlos da Silva",
+      "email": "carlos@gmail.com",
+      "password": "qwyrfgvwe23",
+      "occupation": "Estudante",
+      "active": true
+    }
+  ]
+}

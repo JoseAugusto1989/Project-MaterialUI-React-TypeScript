@@ -23,12 +23,7 @@ const LayoutPageBase = ({ children, title, toolbar }: ILayoutPageBaseProps) => {
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const theme = useTheme();
-  const navigate = useNavigate();
   const { toggleDrawerOpen } = useDrawerContext();
-
-  const handleLogout = () => {
-    navigate('/login');
-  };
 
   return (
     <Box height="100%" display="flex" flexDirection="column" gap={1}>
@@ -53,9 +48,6 @@ const LayoutPageBase = ({ children, title, toolbar }: ILayoutPageBaseProps) => {
         >
           {title}
         </Typography>
-        <ContainerLog>
-          <ButtonLog onClick={handleLogout}>Logout</ButtonLog>
-        </ContainerLog>
       </Box>
 
       {toolbar && <Box>{toolbar}</Box>}
