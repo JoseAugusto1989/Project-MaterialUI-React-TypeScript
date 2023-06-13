@@ -20,20 +20,22 @@ import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { CustomerServiceJsonServer, ICustomerList } from '../../shared/services/api/customer/CustomerServiceJsonServer';
-import { PeopleService } from '../../shared/services/api/people/PeopleServiceExample';
 import usePagination from './helpers/Pagination';
+import CustomerService from '../../shared/services/api/customer/CustomerService';
+import { ICustomer } from '../../interfaces';
+
 
 export const ListCustomer: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(3000, false);
   const navigate = useNavigate();
 
-  const [page, setPage] = useState(1);
-  const [rows, setRows] = useState<ICustomerList[]>([]);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState<ICustomer[]>([]);
   const _DATA = usePagination(rows, Environment.LIMIT_OF_LINES);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [size, setSize] = useState(26);
 
   const handleChange = (e: any, p: number) => {
     setPage(p);
@@ -44,41 +46,39 @@ export const ListCustomer: React.FC = () => {
     return searchParams.get('search') || '';
   }, [searchParams]);
 
-  // const page = useMemo(() => {
-  //   return Number(searchParams.get('page') || '1');
-  // }, [searchParams]);
-
   useEffect(() => {
+    init();
+  }, [page, size]);
+
+  const init = () => {
+    const filters = { size, page };
     setIsLoading(true);
-
-    debounce(() => {
-      CustomerServiceJsonServer.getAll(page, search).then((result) => {
+    CustomerService.getAll(filters)
+      .then((res) => {
+        console.log('CLIENTES...', res.data);
+        setRows(res.data.content);
         setIsLoading(false);
-        console.log(result);
-        console.log(rows);
-
-        if (result instanceof Error) {
-          alert(result.message);
-        } else {
-          setTotalCount(result.totalCount);
-          setRows(result.data);
-        }
+      })
+      .catch((error) => {
+        console.log('Erro em clientes: ', error);
+        setIsLoading(false);
       });
-    });
-  }, [search, page]);
+  };
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      PeopleService.deleteById(id).then((result) => {
-        if (result instanceof Error) {
-          alert(result.message);
-        } else {
-          setRows((oldRows) => [
-            ...oldRows.filter((oldRow) => oldRow.id !== id),
-          ]);
-          alert('Registro apagado com sucesso!');
-        }
-      });
+      CustomerService.delete(id)
+        .then((result) => {
+          if (result instanceof Error) {
+            alert(result.message);
+          
+          } else {
+            setRows((oldRows) => [
+              ...oldRows.filter((oldRow) => oldRow.id !== id),
+            ]);
+            alert('Registro apagado com sucesso!');
+          }
+        });
     }
   };
 

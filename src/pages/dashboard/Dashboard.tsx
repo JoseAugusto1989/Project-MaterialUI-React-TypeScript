@@ -2,20 +2,21 @@ import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { DetailTools, ListTools } from '../../shared/components';
+
+import { DetailTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { EmployeeService } from '../../shared/services/api/employee/EmployeeService';
-import { ProviderService } from '../../shared/services/api/people/ProviderService';
-import { ProductServiceJsonServer } from '../../shared/services/api/product/ProductServiceJsonServer';
+import ProductService from '../../shared/services/api/product/ProductService';
 import { IReduxProps } from '../../store/reducers/objectTest';
 import { ContainerButton } from './styles';
+import { IEmployee, IProduct } from '../../interfaces';
+import EmployeeService from '../../shared/services/api/employee/EmployeeService';
 
 export const Dashboard = () => {
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
-  const [totalCountProduct, setTotalCountProduct] = useState(0);
+  const [rows, setRows] = useState<IProduct[]>([]);
   const [isLoadingEmployee, setIsLoadingEmployee] = useState(true);
-  const [totalCountEmployee, setTotalCountEmployee] = useState(0);
+  const [employee, setEmployee] = useState<IEmployee[]>([]);
   const objTest = useSelector((state: { testRedux: IReduxProps[] }) => state.testRedux);
 
 
@@ -23,14 +24,14 @@ export const Dashboard = () => {
     setIsLoadingProduct(true);
     setIsLoadingEmployee(true);
 
-    ProductServiceJsonServer.getAll(1)
+    ProductService.getAll(1)
       .then((result) => {
         setIsLoadingProduct(false);
 
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          setTotalCountProduct(result.totalCount);
+          setRows(result.data.content);
         }
       });
 
@@ -41,7 +42,7 @@ export const Dashboard = () => {
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          // setIsLoadingEmployee(result.totalCount);
+          setEmployee(result.data.content);
         }
       });
   }, []);
@@ -76,7 +77,7 @@ export const Dashboard = () => {
                         </Typography>
                         <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
                           { !isLoadingEmployee &&( <Typography variant='h1'>
-                            {totalCountEmployee}
+                            { employee.length }
                           </Typography>)}
                           { isLoadingEmployee && (
                             <Typography variant='h6'>
@@ -100,7 +101,7 @@ export const Dashboard = () => {
                         </Typography>
                         <Box padding={6} display='flex' justifyContent='center' alignItems='center'>
                           { !isLoadingProduct &&( <Typography variant='h1'>
-                            {totalCountProduct}
+                            {rows.length}
                           </Typography>)}
                           { isLoadingProduct && (
                             <Typography variant='h6'>
@@ -113,17 +114,6 @@ export const Dashboard = () => {
                   </ContainerButton>
                 </Link>
               </Grid>
-
-              <div>
-                <h1>Test Redux</h1>
-                {objTest?.map((obj, index) => (
-                  <div key={index}>
-                    <p>{obj.name}</p>
-                    <p>{obj.description}</p>
-                  </div>
-                ))}
-              </div>
-
             </Grid>
           </Grid>
         </Box>

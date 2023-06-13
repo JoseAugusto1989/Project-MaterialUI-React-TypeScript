@@ -1,75 +1,59 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  Icon,
-  IconButton,
-  LinearProgress,
-  Pagination,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TableRow,
-} from '@mui/material';
+import { Icon, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { IEmployee } from '../../interfaces';
 import { ListTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
-import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import ProviderService from '../../shared/services/api/provider/ProviderService';
-import { IProvider } from '../../interfaces';
+import EmployeeService from '../../shared/services/api/employee/EmployeeService';
 
-export const ListProvider: React.FC = () => {
+export const ListEmployee: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(3000, false);
   const navigate = useNavigate();
-  const [size, setSize] = useState(26);
-
-  const [rows, setRows] = useState<IProvider[]>([]);
+    
+  const [rows, setRows] = useState<IEmployee[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [size, setSize] = useState(26);
+    
   const search = useMemo(() => {
     return searchParams.get('search') || '';
   }, [searchParams]);
-
+    
   const page = useMemo(() => {
     return Number(searchParams.get('page') || '0');
   }, [searchParams]);
-
+    
   useEffect(() => {
     init();
-  }, [size, page]);
+  }, [page, size]);
 
   const init = () => {
     const filters = { size, page };
     setIsLoading(true);
-    ProviderService.getAll(filters)
+    EmployeeService.getAll(filters)
       .then((res) => {
         setRows(res.data.content);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log('Erro em provider: ', error);
         setIsLoading(false);
       });
   };
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      ProviderService.delete(id)
+      EmployeeService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
             alert(result.message);
-        
+
           } else {
             setRows((oldRows) => [
-              ...oldRows.filter((oldRow) => oldRow.id !== id),
+              ...oldRows.filter((oldRow) => oldRow.id !== id)
             ]);
             alert('Registro apagado com sucesso!');
           }
@@ -80,13 +64,13 @@ export const ListProvider: React.FC = () => {
   return (
     <LateralMenu>
       <LayoutPageBase
-        title="Listagem de fornecedores"
+        title="Listagem de funcionários"
         toolbar={
           <ListTools
             showSearchInput
             newButtonText="Novo"
             searchText={search}
-            clickInNew={() => navigate('/provider/details/new')}
+            clickInNew={() => navigate('/employee/details/new')}
             changeSearchText={(text) =>
               setSearchParams({ search: text, page: '1' }, { replace: true })
             }
@@ -102,24 +86,26 @@ export const ListProvider: React.FC = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Nome</TableCell>
-                <TableCell>Sobrenome</TableCell>
-                <TableCell>Telefone</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Nome Empresa</TableCell>
-                <TableCell>CNPJ</TableCell>
+                <TableCell>Telefone</TableCell>
+                <TableCell>Função</TableCell>
+                <TableCell>Salario</TableCell>
+                <TableCell>Bonificação</TableCell>
+                <TableCell>Data de inicio</TableCell>
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
-
+    
             <TableBody>
               {rows?.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.lastName}</TableCell>
-                  <TableCell>{row.phone}</TableCell>
                   <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.companyName}</TableCell>
-                  <TableCell>{row.cnpj}</TableCell>
+                  <TableCell>{row.phone}</TableCell>
+                  <TableCell>{row.job}</TableCell>
+                  <TableCell>R$ {row.salary.toFixed(2)}</TableCell>
+                  <TableCell>% {row.bonus}</TableCell>
+                  <TableCell>{new Date(row.initialDate).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <IconButton
                       size="small"
@@ -127,46 +113,17 @@ export const ListProvider: React.FC = () => {
                     >
                       <Icon>delete</Icon>
                     </IconButton>
+
                     <IconButton
                       size="small"
-                      onClick={() => navigate(`/provider/details/${row.id}`)}
+                      onClick={() => navigate(`/employee/details/${row.id}`)}
                     >
                       <Icon>edit</Icon>
-                    </IconButton>
-                    <IconButton 
-                      size="small"
-                      onClick={() => navigate('/sendEmailProvider')}
-                    >
-                      <Icon>message</Icon>
                     </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
-
-            {totalCount === 0 && !isLoading && (
-              <caption>{Environment.EMPTY_LIST}</caption>
-            )}
-
-            <TableFooter>
-              {totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES && (
-                <TableRow>
-                  <TableCell colSpan={4}>
-                    <Pagination
-                      page={page}
-                      onChange={(_, newPage) =>
-                        setSearchParams(
-                          { search, page: newPage.toString() },
-                          { replace: true }
-                        )
-                      }
-                      count={Math.ceil(totalCount / Environment.LIMIT_OF_LINES)}
-                    />
-                    <LinearProgress variant="indeterminate" />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableFooter>
           </Table>
         </TableContainer>
       </LayoutPageBase>

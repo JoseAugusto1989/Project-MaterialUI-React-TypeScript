@@ -1,22 +1,24 @@
+/* eslint-disable no-empty */
 import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { ICustomer } from '../../interfaces';
 import { DetailTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { IVFormErrors, VForm, VTextField } from '../../shared/forms';
 import { useVForm } from '../../shared/forms/useVForm';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { CustomerServiceJsonServer, ICustomerList } from '../../shared/services/api/customer/CustomerServiceJsonServer';
+import CustomerService from '../../shared/services/api/customer/CustomerService';
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 
-const formValidationSchema: yup.SchemaOf<ICustomerList> = yup.object().shape({
+const formValidationSchema: yup.SchemaOf<ICustomer> = yup.object().shape({
   name: yup.string().required().min(3),
   lastName: yup.string().required().min(3),
-  id: yup.number().required(),
+  id: yup.mixed().optional(),
   email: yup.string().required().email(),
   phone: yup.string().required().matches(phoneRegExp, 'Este telefone não é um número válido'),
   address: yup.string().required().min(3),
@@ -37,28 +39,25 @@ export const DetailCustomer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
 
-  const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
+  const { formRef, save, resetForm, saveAndClose, isSaveAndClose } = useVForm();
 
   useEffect(() => {
     if (id !== 'new') {
       setIsLoading(true);
 
-      CustomerServiceJsonServer.getById(Number(id)).then((result: Record<string, any>) => {
-        setIsLoading(false);
+      CustomerService.get(Number(id))
+        .then((result) => {
+          setIsLoading(false);
 
-        if (result instanceof Error) {
-          alert(result.message);
-          navigate('/customer');
+          if (result instanceof Error) {
+            navigate('/customer');
 
-        } else {
-          setName(result.name);
-          console.log(result);
-
-          formRef.current?.setData(result);
-
-          alert('Cliente adicionado com sucesso!');
-        }
-      });
+          } else {
+            setName(result.data.content);
+            formRef.current?.setData(result);
+            alert('Cliente adicionado com sucesso!');
+          }
+        });
     } else {
       formRef.current?.setData({
         name: '',
@@ -74,47 +73,47 @@ export const DetailCustomer: React.FC = () => {
         state: '',
       });
     }
-  }, [id]);
+  }, []);
 
-  const handleSave = (data: ICustomerList) => {
+  const handleSave = (data: ICustomer) => {
     formValidationSchema.
       validate(data, { abortEarly: false })
       .then((validateData) => {
         setIsLoading(true);
 
         if (id === 'new') {
-          CustomerServiceJsonServer.create(validateData).then((result) => {
-            setIsLoading(false);
+          CustomerService.create(validateData)
+            .then((result) => {
+              setIsLoading(false);
 
-            if (result instanceof Error) {
-              alert(result.message);
-
-            } else {
-              if (isSaveAndClose()) {
-                console.log(result);
-                navigate('/customer');
+              if (result instanceof Error) {
 
               } else {
-                navigate(`/customer/details/${result}`);
-              }    
-            }
-          });
+                if (isSaveAndClose()) {
+                  navigate('/customer');
+
+                } else {
+                  navigate(`/customer/details/${result}`);
+                }
+                resetForm();    
+              }
+            });
       
         } else {
           // TODO: olhar aqui algum erro no Product
           // (Number(id), { id: Number(id), ...data })
-          CustomerServiceJsonServer.updateById(Number(id), { ...validateData }).then((result) => {
-            setIsLoading(false);
+          CustomerService.update({ ...validateData })
+            .then((result) => {
+              setIsLoading(false);
 
-            if (result instanceof Error) {
-              alert(result.message);
+              if (result instanceof Error) {
 
-            } else {
-              if (isSaveAndClose()) {
-                navigate('/customer');
+              } else {
+                if (isSaveAndClose()) {
+                  navigate('/customer');
+                }
               }
-            }
-          });
+            });
         }
       })
       .catch((_errors: yup.ValidationError) => {
@@ -122,27 +121,11 @@ export const DetailCustomer: React.FC = () => {
 
         _errors.inner.forEach(error => {
           if (!error.path) return;
-
           validationsErrors[error.path] = error.message;
-
         });
         console.log('Erros Yup: ', validationsErrors);
         formRef.current?.setErrors(validationsErrors);
-
       });
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm('Realmente deseja apagar?')) {
-      CustomerServiceJsonServer.deleteById(id).then((result) => {
-        if (result instanceof Error) {
-          alert(result.message);
-        } else {
-          alert('Registro apagado com sucesso!');
-          navigate('/customer');
-        }
-      });
-    }
   };
 
   return(
@@ -157,14 +140,13 @@ export const DetailCustomer: React.FC = () => {
             showButtonDelete={id !== 'new'}
             toClickInSave={save}
             toClickInSaveAndClose={saveAndClose}
-            toClickInDelete={() => handleDelete(Number(id))}
             toClickInNew={() => navigate('/customer/detail/new')}
             toClickInBack={() => navigate('/customer')}
           />
         }
       >
         <VForm ref={formRef} onSubmit={handleSave} >
-          <Box margin={1} display="flex" flexDirection="column" component={Paper} variant="outlined" >
+          <Box margin={1} display="flex" flexDirection="row" component={Paper} variant="outlined" >
             <Grid container direction="column" padding={4} spacing={2}>
 
               { isLoading && (<Grid item>
@@ -176,7 +158,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Nome" 
                     name="name" 
@@ -189,7 +171,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Sobrenome" 
                     name="lastName"  
@@ -199,7 +181,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="E-mail" 
                     name="email"  
@@ -209,7 +191,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Telefone" 
                     name="phone"  
@@ -219,7 +201,58 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField
+                    label="Ocupação" 
+                    name="occupation"  
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+
+              
+
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField
+                    label="CPF" 
+                    name="cpf"  
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+
+              {/* TODO: validar CPF e CNPJ com um checkbutton */}
+              
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField
+                    label="CNPJ" 
+                    name="cnpj"  
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container direction="column" padding={4} spacing={2}>
+
+              <Grid item>
+                <Typography variant='h6'>Endereço:</Typography>
+              </Grid>
+            
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField
+                    label="Estado" 
+                    name="state"  
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Cidade" 
                     name="city"  
@@ -229,49 +262,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                  <VTextField
-                    label="Estado" 
-                    name="state"  
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              {/* TODO: validar CPF e CNPJ com um checkbutton */}
-              
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                  <VTextField
-                    label="CNPJ" 
-                    name="cnpj"  
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                  <VTextField
-                    label="CPF" 
-                    name="cpf"  
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                  <VTextField
-                    label="Ocupação" 
-                    name="occupation"  
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Endereço" 
                     name="address"  
@@ -281,7 +272,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Número" 
                     name="number"  
@@ -291,7 +282,7 @@ export const DetailCustomer: React.FC = () => {
               </Grid>
 
               <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Distrito" 
                     name="district"  
@@ -299,22 +290,9 @@ export const DetailCustomer: React.FC = () => {
                   />
                 </Grid>
               </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={2}>
-                  <VTextField
-                    label="Id" 
-                    name="id"  
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-            </Grid>
+            </Grid>  
           </Box>
         </VForm>
-
-        {isLoading && <LinearProgress variant="indeterminate" />}
       </LayoutPageBase>
     </LateralMenu>
   );

@@ -27,7 +27,7 @@ const getAll = async (
 ): Promise<TTotalCountCustomer | Error> => {
   try {
     const urlRelative = `/customer/getAllCustomer?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&completeName_like=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const { data, headers } = await API().get(urlRelative);
     if (data) {
       return {
         data,

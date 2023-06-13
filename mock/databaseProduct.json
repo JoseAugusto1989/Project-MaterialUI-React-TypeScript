@@ -1,16 +1,6 @@
 {
   "product": [
     {
-      "id": 1,
-      "name": "Antonio Carlos dos Santos",
-      "salePrice": 22.5,
-      "purchasePrice": 18,
-      "gain": 4.5,
-      "quantityInStock": 20,
-      "addedAmount": 25,
-      "provider": "João Teste"
-    },
-    {
       "id": 2,
       "name": "Cristiano Santos",
       "salePrice": 22.5,
@@ -19,15 +9,6 @@
       "quantityInStock": 20,
       "addedAmount": 25,
       "provider": "João Teste"
-    },
-    {
-      "name": "Tadeu Mello teste",
-      "quantityInStock": 10,
-      "salePrice": 10.5,
-      "provider": "Teste Fornecedor",
-      "purchasePrice": 8,
-      "addedAmount": 15,
-      "id": 3
     },
     {
       "name": "Marcio Souza 2",
@@ -237,6 +218,46 @@
       "purchasePrice": "10",
       "addedAmount": "12",
       "id": 25
+    },
+    {
+      "salePrice": 1,
+      "quantityInStock": 1,
+      "purchasePrice": 1,
+      "addedAmount": 1,
+      "provider": "teste",
+      "gain": 110,
+      "id": 31,
+      "name": "teste"
+    },
+    {
+      "salePrice": 12,
+      "quantityInStock": 12,
+      "purchasePrice": 10,
+      "addedAmount": 2,
+      "provider": "tetstete",
+      "gain": 2,
+      "id": 32,
+      "name": "teste 123"
+    },
+    {
+      "salePrice": 12,
+      "quantityInStock": 12,
+      "purchasePrice": 12,
+      "addedAmount": 12,
+      "provider": "teste1234",
+      "gain": 0,
+      "id": 36,
+      "name": "teste1234"
+    },
+    {
+      "salePrice": 20,
+      "quantityInStock": 12,
+      "purchasePrice": 10,
+      "addedAmount": 12,
+      "provider": "teste 5",
+      "gain": 10,
+      "id": 37,
+      "name": "Batata teste 4"
     }
   ],
   "customer": [

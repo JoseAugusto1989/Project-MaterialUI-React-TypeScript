@@ -1,6 +1,7 @@
 import { Environment } from '../../../environments';
 import { API } from '../axios-config';
 import { Pageable } from '../../../../models/index';
+import axios from 'axios';
 
 export type IProductList = {
   id: number;
@@ -18,13 +19,22 @@ export type TTotalCountProduct = {
   totalCount: number;
 };
 
+const getAllProducts = async (page: number, size: number) => {
+  try {
+    const response = await axios.get(`/product/getAllProduct?page=${page}&size=${size}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const getAll = async (
   page = 1,
   filter = ''
 ): Promise<TTotalCountProduct | Error> => {
   try {
     const urlRelative = `/product/getAllProduct?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&name=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const { data, headers } = await API().get(urlRelative);
 
     if (data) {
       return {
@@ -44,7 +54,7 @@ const getAll = async (
 
 const getById = async (id: number): Promise<TTotalCountProduct | Error> => {
   try {
-    const { data } = await API.get(`/product/${id}`);
+    const { data } = await API().get(`/product/${id}`);
 
     if (data) {
       return data;
@@ -59,7 +69,7 @@ const getById = async (id: number): Promise<TTotalCountProduct | Error> => {
 
 const create = async (dados: Omit<IProductList, 'id'>): Promise<number | Error> => {
   try {
-    const { data } = await API.post<IProductList>('/product/addProduct', dados);
+    const { data } = await API().post<IProductList>('/product/addProduct', dados);
     
     if (data) {
       return data.id;
@@ -74,7 +84,7 @@ const create = async (dados: Omit<IProductList, 'id'>): Promise<number | Error> 
 
 const updateById = async (id: number, dados: IProductList): Promise<void | Error> => {
   try {
-    await API.put(`/product/${id}`, dados);
+    await API().put(`/product/${id}`, dados);
    
   } catch (error) {
     console.error(error);
@@ -85,7 +95,7 @@ const updateById = async (id: number, dados: IProductList): Promise<void | Error
 
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    await API.delete(`/product/${id}`);
+    await API().delete(`/product/${id}`);
 
   } catch (error) {
     console.error(error);
@@ -95,6 +105,7 @@ const deleteById = async (id: number): Promise<void | Error> => {
 
 export const ProductService = {
   getAll,
+  getAllProducts,
   getById,
   deleteById,
   create,

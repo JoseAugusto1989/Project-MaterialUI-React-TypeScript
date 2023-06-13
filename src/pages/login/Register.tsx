@@ -1,11 +1,13 @@
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import validator from 'validator';
 
 import emailIcon from '../../assets/img/Message.png';
 import passwordIcon from '../../assets/img/Password.png';
 import ButtonLogin from './ButtonLogin';
 import InputLogin from './Input';
+import { UsersSchema } from './NewRegister';
 import {
   ContainerLeft,
   ContainerMain,
@@ -16,36 +18,36 @@ import {
   LetterLogo,
   TextContainerLeft,
 } from './Register.styles';
-
-interface IUsers {
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+import { IUsers } from '../../interfaces';
 
 export const Register : React.FC = () => {
-
-  const { register, watch, handleSubmit, formState: { errors }, } = useForm<IUsers>();
-
+  const formMethods = useForm<IUsers>({ resolver: UsersSchema });
+  const [dataUser, setDataUser] = useState<IUsers>();
+  const[email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { register, watch, handleSubmit, formState: { errors }, } = formMethods;
   const navigate = useNavigate();
   const watchPassword = watch('password');
-
-  const handleMenu = () => {
-    navigate('/initial-page');
-  };
 
   const handleNewLogin = () => {
     navigate('/newLogin');
   };
 
-  const handleLogin = (data: IUsers) => {
-    alert(JSON.stringify(data));
-    console.log(data);
+  const handleLogin = () => {
+  // const handleLogin = async (email: string, password: string) => {
+    navigate('/initial-page');
+    // await UsersServices.getLogin(email, password)
+    //   .then((res) => {
+    //     // setDataUser(res.data.content);
+    //     alert('deu certo 1');
+    //   })
+    //   .then(() => navigate('initial-page'))
+    //   .catch();
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(handleLogin)}>
+    <FormProvider {...formMethods}>
+      <form onSubmit={() => handleLogin()}>
         <ContainerMain>
           <ContainerLeft color="#484747">
             <LetterLogo>OPTIMIZATION SYSTEM</LetterLogo>
@@ -64,10 +66,10 @@ export const Register : React.FC = () => {
 
             <InputLogin
               icon={emailIcon}
+              functionClick={(event) => setEmail(event.target.value)}
               type="email"
               placeholder="Email"
               {...register('email', {
-                required: true,
                 validate: (value) => validator.isEmail(value)
               })}
             />
@@ -77,40 +79,23 @@ export const Register : React.FC = () => {
 
             <InputLogin
               icon={passwordIcon}
+              functionClick={(event) => setPassword(event.target.value)}
               type="password"
               placeholder="Senha"
               {...register('password', {
-                required: true, 
-                minLength: 6,
+                minLength: 4,
               })}
             />
             {errors?.password?.type === 'required' && (
               <p style={{ color: 'red', padding: '0px 160px 0px 0px' }}>Password é obrigatório</p>
             )}
 
-            <InputLogin
-              icon={passwordIcon}
-              type="password"
-              placeholder="Confirme sua senha"
-              {...register('confirmPassword', {
-                required: true,
-                validate: (value) => value === watchPassword,
-              })}
-            />
-            {errors?.confirmPassword?.type === 'required' && (
-              <p style={{ color: 'red', padding: '0 70px 0 0' }}>Confirmação da senha é obrigatório</p>
-            )}
-
-            {errors?.confirmPassword?.type === 'validate' && (
-              <p style={{ color: 'red' }} className="error-message">Passwords does not match.</p>
-            )}
-
             <DivTest>
-              <ButtonLogin onClick={handleMenu} type='submit'>ENTRAR</ButtonLogin>
+              <ButtonLogin>ENTRAR</ButtonLogin>
             </DivTest>
           </ContainerRight>
         </ContainerMain>
       </form>
-    </div>
+    </FormProvider>
   );
 };

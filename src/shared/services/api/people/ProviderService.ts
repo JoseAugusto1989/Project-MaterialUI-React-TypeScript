@@ -1,19 +1,10 @@
 import { Environment } from '../../../environments';
 import { API } from '../axios-config';
 import { Pageable } from '../../../../models/index';
-
-export type IProviderList = {
-  id: number;
-  name: string;
-  lastName: string;
-  phone: number;
-  email: string;
-  companyName: string;
-  cnpj: string;
-};
+import { IProvider } from '../../../../interfaces';
 
 export type TTotalCountProvider = {
-  data: Pageable<IProviderList>;
+  data: Pageable<IProvider>;
   totalCount: number;
 };
 
@@ -23,7 +14,7 @@ const getAll = async (
 ): Promise<TTotalCountProvider | Error> => {
   try {
     const urlRelative = `/provider/getAllProvider?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&completeName_like=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const { data, headers } = await API().get(urlRelative);
     if (data) {
       return {
         data,

@@ -16,6 +16,6 @@ export const Environment = {
    * Esta URL é do Json-server
    * 'http://localhost:8090'
    */
-  URL_BASE: 'http://localhost:3333',
+  URL_BASE: 'http://localhost:8090',
 
 };

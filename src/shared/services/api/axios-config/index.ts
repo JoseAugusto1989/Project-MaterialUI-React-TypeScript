@@ -4,17 +4,17 @@ import { Environment } from './../../../environments';
 import { errorInterceptor } from './interceptors/errorInterceptor';
 import { responseInterceptor } from './interceptors/responseInterceptor';
 
-const API = axios.create({
-  baseURL: Environment.URL_BASE,
-  // TODO: olhar pq este cara não esta funcionando...
-  // headers: {
-  //   Authorization: `Bearer ${JSON.parse(localStorage.getItem('APP_ACCESS_TOKEN') || '')}`,
-  // }
-});
+export const API = () => {
+  const api = axios.create({
+    baseURL: Environment.URL_BASE,
+    headers: {
+      authorization: `Bearer ${JSON.parse(localStorage.getItem('APP_ACCESS_TOKEN') || '""')}`
+    }
+  });
 
-API.interceptors.response.use(
-  (response) => responseInterceptor(response),
-  (error) => errorInterceptor(error),
-);
-
-export { API };
+  api.interceptors.response.use(
+    (response) => responseInterceptor(response),
+    (error) => errorInterceptor(error),
+  );
+  return api;
+};

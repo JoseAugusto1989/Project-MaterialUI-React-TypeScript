@@ -1,3 +1,4 @@
+import { IProduct } from '../../../../interfaces';
 import { Environment } from '../../../environments';
 import { API } from '../axios-config';
 
@@ -13,39 +14,26 @@ export interface IDetailProduct {
     provider: string;
 }
 
-export interface IProductList {
-    id: number;
-    name: string;
-    salePrice: number;
-    purchasePrice: number;
-    gain: number;
-    quantityInStock: number;
-    addedAmount: number;
-    // TODO: transformar em Objeto 'Provider'
-    provider: string;
-}
-
 export type TProductTotalCount = {
-    data: IProductList[];
+    data: IProduct[];
     totalCount: number;
 }
 
 const getAll = async (
   page = 1, 
-  filter = ''
+  filter = '',
+  id = '',
 ): Promise<TProductTotalCount | Error> => {
   try {
-    const urlRelative = `/product?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&name_like=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const urlRelative = `/product?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&nome_like=${filter}&id_like=${id}`;
+    const { data, headers } = await API().get(urlRelative);
 
     console.log(data);
 
     if (data) {
       return {
         data,
-        totalCount: Number(
-          headers['x-total-count'] || Environment.LIMIT_OF_LINES
-        ),
+        totalCount: Number(headers['x-total-count'] || Environment.LIMIT_OF_LINES),
       };
     } 
     return new Error('Erro ao listar os Produtos.');
@@ -60,7 +48,7 @@ const getAll = async (
 
 const getById = async (id: number): Promise<IDetailProduct | Error> => {
   try {
-    const { data } = await API.get(`/product/${id}`);
+    const { data } = await API().get(`/product/${id}`);
 
     if (data) {
       return data;
@@ -77,8 +65,11 @@ const getById = async (id: number): Promise<IDetailProduct | Error> => {
 
 const create = async (_data: Omit<IDetailProduct, 'id'>): Promise<number | Error> => {
   try {
-    const { data } = await API.post<IDetailProduct>('/product', _data);
-    
+    // conta do ganho ja usado no backend java
+    // _data.gain = _data.salePrice - _data.purchasePrice;
+
+    const { data } = await API().post<IDetailProduct>('/product', _data);
+
     if (data) {
       return data.id;
     }
@@ -94,7 +85,7 @@ const create = async (_data: Omit<IDetailProduct, 'id'>): Promise<number | Error
 
 const updateById = async (id: number, _data: IDetailProduct): Promise<void | Error> => {
   try {
-    await API.put(`/product/${id}`, _data);
+    await API().put(`/product/${id}`, _data);
             
   } catch (error) {
     console.error(error);
@@ -106,7 +97,7 @@ const updateById = async (id: number, _data: IDetailProduct): Promise<void | Err
 
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    await API.delete(`/product/${id}`);
+    await API().delete(`/product/${id}`);
                 
   } catch (error) {
     console.error(error);

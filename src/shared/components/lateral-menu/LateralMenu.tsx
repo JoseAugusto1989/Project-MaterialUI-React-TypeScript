@@ -80,10 +80,10 @@ const LateralMenu: React.FC<LateralMenuProps> = ({ children }) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Avatar
+            {/* <Avatar
               src=""
               sx={{ height: theme.spacing(16), width: theme.spacing(16) }}
-            />
+            /> */}
           </Box>
 
           <Divider />

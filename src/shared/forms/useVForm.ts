@@ -20,6 +20,10 @@ export const useVForm = () => {
     formRef.current?.submitForm();
   }, []);
 
+  const handleResetForm = useCallback(() => {
+    formRef.current?.reset();
+  }, []);
+
   const handleSaveAndNew = useCallback(() => {
     isSavingAndClose.current = false;
     isSavingAndNew.current = true;
@@ -40,7 +44,7 @@ export const useVForm = () => {
     save: handleSave,
     saveAndNew: handleSaveAndNew,
     saveAndClose: handleSaveAndClose,
-
+    resetForm: handleResetForm,
     isSaveAndNew: handleIsSaveAndNew,
     isSaveAndClose: handleIsSaveAndClose,
   };

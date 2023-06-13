@@ -7,6 +7,7 @@ type TVTextFieldProps = {
     name: string;
     label: string;
     disabled?: boolean;
+    value?: number | string;
     size?: 'small' | 'medium' | undefined;
     onChange?: React.FormEventHandler<HTMLInputElement>;
 }

@@ -33,7 +33,7 @@ const getAll = async (
 ): Promise<TUsersTotalCount | Error> => {
   try {
     const urlRelative = `users?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&name_like=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const { data, headers } = await API().get(urlRelative);
 
     if (data) {
       return {
@@ -55,7 +55,7 @@ const getAll = async (
 
 const getById = async (id: number): Promise<IUsers | Error> => {
   try {
-    const { data } = await API.get(`/users/${id}`);
+    const { data } = await API().get(`/users/${id}`);
 
     if (data) {
       return data;
@@ -72,7 +72,7 @@ const getById = async (id: number): Promise<IUsers | Error> => {
 
 const create = async (_data: Omit<IUsers, 'id'>): Promise<number | Error> => {
   try {
-    const { data } = await API.post<IUsers>('/users', _data);
+    const { data } = await API().post<IUsers>('/users', _data);
 
     if (data) {
       return data.id;
@@ -89,7 +89,7 @@ const create = async (_data: Omit<IUsers, 'id'>): Promise<number | Error> => {
 
 const updateById = async (id: number, _data: IUsers): Promise<void | Error> => {
   try {
-    await API.put(`/users/${id}`, _data);
+    await API().put(`/users/${id}`, _data);
                 
   } catch (error) {
     console.error(error);
@@ -101,7 +101,7 @@ const updateById = async (id: number, _data: IUsers): Promise<void | Error> => {
     
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    await API.delete(`/users/${id}`);
+    await API().delete(`/users/${id}`);
                     
   } catch (error) {
     console.error(error);

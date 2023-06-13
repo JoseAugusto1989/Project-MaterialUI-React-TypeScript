@@ -1,48 +1,71 @@
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/ban-types */
+import { Box, Grid, Paper, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
-import { IProduct } from '../../interfaces';
+import { IEmployee, ISales } from '../../interfaces';
 import { DetailTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { IVFormErrors, useVForm, VForm, VTextField } from '../../shared/forms';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import ProductService from '../../shared/services/api/product/ProductService';
+import EmployeeService from '../../shared/services/api/employee/EmployeeService';
+import SalesService from '../../shared/services/api/sales/SalesService';
 
-const formValidationSchema: yup.SchemaOf<IProduct> = yup.object().shape({
-  name: yup.string().required().min(3),
+const formSchema: yup.SchemaOf<ISales> = yup.object().shape({
   id: yup.mixed().optional(),
-  gain: yup.number().optional(),
+  employee: yup.string().required(),
+  productName: yup.string().required(),
   code: yup.string().required(),
-  provider: yup.string().required().min(3),
-  // TODO: verificar o yup dos inputs que recebem numeros
-  addedAmount: yup.number().required().positive().integer(),
-  purchasePrice: yup.number().required().positive(),
-  quantityInStock: yup.number().required().positive().integer() ,
-  salePrice: yup.number().required().positive(),
+  unitPrice: yup.number().required(),
+  totalPrice: yup.mixed().optional(),
+  quantity: yup.number().required(),
+  customer: yup.string().required(),
+  dateSale: yup.mixed().optional(),
+  description: yup.mixed().optional(),
 });
 
-export const DetailProduct: React.FC = () => {
+export const DetailSales = () => {
   const { id = 'new' } = useParams<'id'>();
   const navigate = useNavigate();
-
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
-
   const { formRef, save, saveAndClose, isSaveAndClose } = useVForm();
+  const [selectedValue, setSelectedValue] = useState<IEmployee>();
+  const [employeeName, setEmployeeName] = useState('');
+
+  useEffect(() => {
+    init();
+  }, []);
+  
+  const init = () => {
+    setIsLoading(true);
+    const list: IEmployee[] = [];
+    EmployeeService.getAllList(list)
+      .then((res) => {
+        console.log('Funcionarios', res);
+        setSelectedValue(res.data.content[0]?.id || ''); 
+        setEmployeeName(res.data.content[0]?.name || '');
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log('Erro em funcionarios: ', error);
+        setIsLoading(false);
+      });
+  };
+
 
   useEffect(() => {
     if (id !== 'new') {
       setIsLoading(true);
 
-      ProductService.get(Number(id))
+      SalesService.get(Number(id))
         .then((result) => {
           setIsLoading(false);
 
           if (result instanceof Error) {
             alert(result.message);
-            navigate('/product');
+            navigate('/sales');
 
           } else {
             // TODO: verificar o endpoint para atualizar o produto
@@ -51,41 +74,45 @@ export const DetailProduct: React.FC = () => {
 
             formRef.current?.setData(result);
 
-            alert('Produto adicionado com sucesso!');
+            alert('Venda realizada com sucesso!');
           }          
         });
     } else {
       formRef.current?.setData({
-        name: '',
-        quantityInStock: '',
-        salePrice: '',
+        employee: '',
+        unitPrice: '',
+        productName: '',
+        totalPrice: '',
+        quantity: '',
         code: '',
-        provider: '',
-        purchasePrice: '',
-        addedAmount: '',
+        customer: '',
+        dateSale: '',
+        description: '',
       });
     }
-  }, [id]);
+  }, [formRef, id, navigate]);
 
-  const handleSave = (data: IProduct) => {
-    formValidationSchema.
+  const handleSave = (data: ISales) => {
+    formSchema.
       validate(data, { abortEarly: false })
       .then((validateData) => {
         setIsLoading(true);
 
         if (id === 'new') {
-          ProductService.create(validateData).then((result) => {
+          SalesService.create(validateData).then((result) => {
             setIsLoading(false);
+            console.log('OK axios', result);
 
             if (result instanceof Error) {
               alert(result.message);
+              console.log('Erro', data);
 
             } else {
               if (isSaveAndClose()) {
-                navigate('/product');
+                navigate('/sales');
 
               } else {
-                navigate(`/product/details/${result}`);
+                navigate(`/sales/details/${result}`);
               }    
             }
           });
@@ -93,7 +120,7 @@ export const DetailProduct: React.FC = () => {
         } else {
           // TODO: olhar aqui algum erro no Product
           // (Number(id), { id: Number(id), ...data })
-          ProductService.update({ ...validateData }).then((result) => {
+          SalesService.update({ ...validateData }).then((result) => {
             setIsLoading(false);
 
             if (result instanceof Error) {
@@ -101,7 +128,7 @@ export const DetailProduct: React.FC = () => {
 
             } else {
               if (isSaveAndClose()) {
-                navigate('/product');
+                navigate('/sales');
               }
             }
           });
@@ -112,7 +139,6 @@ export const DetailProduct: React.FC = () => {
 
         _errors.inner.forEach(error => {
           if (!error.path) return;
-
           validationsErrors[error.path] = error.message;
 
         });
@@ -124,12 +150,12 @@ export const DetailProduct: React.FC = () => {
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      ProductService.delete(id).then((result) => {
+      SalesService.delete(id).then((result) => {
         if (result instanceof Error) {
           alert(result.message);
         } else {
-          alert('Registro apagado com sucesso!');
-          navigate('/product');
+          alert('Venda apagado com sucesso!');
+          navigate('/sales');
         }
       });
     }
@@ -138,7 +164,7 @@ export const DetailProduct: React.FC = () => {
   return (
     <LateralMenu>
       <LayoutPageBase
-        title={id === 'new' ? 'Novo produto' : `Produto: ${name}`}
+        title={id === 'new' ? 'Nova venda' : `Venda: ${name}`}
         toolbar={
           <DetailTools
             textButtonNew="Nova"
@@ -148,8 +174,8 @@ export const DetailProduct: React.FC = () => {
             toClickInSave={save}
             toClickInSaveAndClose={saveAndClose}
             toClickInDelete={() => handleDelete(Number(id))}
-            toClickInNew={() => navigate('/product/detail/new')}
-            toClickInBack={() => navigate('/product')}
+            toClickInNew={() => navigate('/sales/detail/new')}
+            toClickInBack={() => navigate('/sales')}
           />
         }
       >
@@ -162,13 +188,10 @@ export const DetailProduct: React.FC = () => {
 
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
-                    label="Nome Produto" 
-                    name="name" 
-                    // TODO: corrigir onChange para settar um novo nome ao produto ao atualizar
-                    onChange={(e: any) => setName(e.target.value)}
+                  <VTextField 
+                    label="Vendedor" 
+                    name="employee" 
                     disabled={isLoading}
-                    size='medium'
                   />
                 </Grid>
               </Grid>
@@ -176,7 +199,17 @@ export const DetailProduct: React.FC = () => {
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField 
-                    label="Código" 
+                    label="Nome do produto" 
+                    name="productName" 
+                    disabled={isLoading}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField 
+                    label="Código do produto" 
                     name="code" 
                     disabled={isLoading}
                   />
@@ -186,8 +219,24 @@ export const DetailProduct: React.FC = () => {
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField 
-                    label="Fornecedor" 
-                    name="provider" 
+                    label="Descrição" 
+                    name="description"
+                  />            
+                </Grid>
+              </Grid>       
+            </Grid>
+        
+            <Grid container direction="column" padding={4} spacing={2}>
+
+              <Grid item>
+                <Typography variant='h6'>Informações:</Typography>
+              </Grid>
+
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <VTextField
+                    label="Quantidade" 
+                    name="quantity" 
                     disabled={isLoading}
                   />
                 </Grid>
@@ -195,67 +244,27 @@ export const DetailProduct: React.FC = () => {
             
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
-                    label="Qtd. Estoque" 
-                    name="quantityInStock" 
+                  <VTextField 
+                    label="Cliente" 
+                    name="customer" 
                     disabled={isLoading}
                   />
                 </Grid>
               </Grid>
-            </Grid>
-          
-            <Grid container direction="column" padding={4} spacing={2}>
-
-              <Grid item>
-                <Typography variant='h6'>Quantidades:</Typography>
-              </Grid>
-              
+            
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField 
-                    label="Preço de venda" 
-                    name="salePrice" 
+                    label="Preço unitário" 
+                    name="unitPrice" 
                     disabled={isLoading}
                   />
                 </Grid>
               </Grid>
-              
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField 
-                    label="Preço de compra" 
-                    name="purchasePrice"
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              {/* <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField 
-                    label="Lucro" 
-                    name="gain" 
-                    //value={}
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid> */}
            
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField 
-                    label="Qtd. Adicionada" 
-                    name="addedAmount" 
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-             
             </Grid>
           </Box>
         </VForm>
-
-        {isLoading && <LinearProgress variant="indeterminate" />}
       </LayoutPageBase>
     </LateralMenu>
   );

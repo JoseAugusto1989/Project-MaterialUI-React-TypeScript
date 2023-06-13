@@ -3,7 +3,7 @@ import { useField } from '@unform/core';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useDebounce } from '../../../shared/hooks';
-import { EmployeeService } from '../../../shared/services/api/employee/EmployeeService';
+import { EmployeeServiceJsonServer } from '../../../shared/services/api/employee/EmployeeServiceJsonServer';
 
 type TAutoCompleteOption = {
     id: number
@@ -22,13 +22,15 @@ export const AutoComplete: React.FC<IAutoCompleteEmployeeProps> = ({ isExternalL
 
   const [options, setOptions] = useState<TAutoCompleteOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [search, setSearch] = useState(''); 
+  const [page, setPage] = useState(0); 
+  const [size, setSize] = useState(10);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setIsLoading(true);  
 
     debounce(() => {
-      EmployeeService.getAll(1, search)
+      EmployeeServiceJsonServer.getAll(1, search)
         .then((result) => {
           setIsLoading(false);
 
@@ -85,7 +87,6 @@ export const AutoComplete: React.FC<IAutoCompleteEmployeeProps> = ({ isExternalL
           {...params}
           error={!!error}
           helperText={error}
-
           label="Funcionários"
         />
       )}

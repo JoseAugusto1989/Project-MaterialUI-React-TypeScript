@@ -31,7 +31,7 @@ export const ContainerRegister = styled.div`
   border-radius: 8px 8px 8px 8px;
   border: 1px solid #000000;
   box-shadow: 2px 2px 10px;
-  padding: 100px 100px 100px 100px;
+  padding: 100px 100px 50px 100px;
 `;
 
 export const TextContainerLeft = styled.h2`

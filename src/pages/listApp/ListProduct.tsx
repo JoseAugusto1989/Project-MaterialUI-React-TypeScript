@@ -23,29 +23,31 @@ import { ProductModal } from '../../shared/components/modals/modal/ProductModal'
 import { Environment } from '../../shared/environments';
 import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
-import { IProductList, ProductServiceJsonServer } from '../../shared/services/api/product/ProductServiceJsonServer';
+import ProductService from '../../shared/services/api/product/ProductService';
 import usePagination from './helpers/Pagination';
+import { IProduct } from '../../interfaces';
 
 export const ListProduct: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce(3000, false);
   const navigate = useNavigate();
-  const [rows, setRows] = useState<IProductList[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState<IProduct[]>([]);
+  const [size, setSize] = useState(26);
 
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [page, setPage] = useState(1);
   
-  const count = Math.ceil(totalCount / Environment.LIMIT_OF_LINES);
+  const count = Math.ceil(totalCount / size);
   const _DATA = usePagination(rows, Environment.LIMIT_OF_LINES);
 
   const handleChange = (e: any, p: number) => {
     setPage(p);
     _DATA.jump(p);
+    init();
   };
 
   const search = useMemo(() => {
@@ -53,38 +55,38 @@ export const ListProduct: React.FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    init();
+  }, [page, size]);
+
+  const init = () => {
+    const filters = { size, page };
     setIsLoading(true);
-
-    debounce(() => {
-      ProductServiceJsonServer.getAll(page, search).then((result) => {
+    ProductService.getAll(filters)
+      .then((res) => {
+        console.log('PRODUTOS...', res.data);
+        setRows(res.data.content);
         setIsLoading(false);
-        console.log(rows);
-
-        if (result instanceof Error) {
-          alert(result.message);
-
-        } else {
-          console.log(result);
-          setTotalCount(result.totalCount);
-          setRows(result.data);
-        }
+      })
+      .catch((error) => {
+        console.log('Erro em produtos: ', error);
+        setIsLoading(false);
       });
-    });
-  }, [search, page]);
+  };
 
   const handleDelete = (id: number) => {
     if (confirm('Realmente deseja apagar?')) {
-      ProductServiceJsonServer.deleteById(id).then((result) => {
-        if (result instanceof Error) {
-          alert(result.message);
+      ProductService.delete(id)
+        .then((result) => {
+          if (result instanceof Error) {
+            alert(result.message);
 
-        } else {
-          setRows((oldRows) => [
-            ...oldRows.filter((oldRow) => oldRow.id !== id),
-          ]);
-          alert('Registro apagado com sucesso!');
-        }
-      });
+          } else {
+            setRows((oldRows) => [
+              ...oldRows.filter((oldRow) => oldRow.id !== id)
+            ]);
+            alert('Registro apagado com sucesso!');
+          }
+        });
     }
   };
 
@@ -140,9 +142,9 @@ export const ListProduct: React.FC = () => {
                   {row.quantityInStock >= 10 && (
                     <TableCell>{row.quantityInStock}</TableCell>
                   )}
-                  <TableCell>R$ {row.salePrice}</TableCell>
+                  <TableCell>R$ {row.salePrice.toFixed(2)}</TableCell>
                   <TableCell>{row.provider}</TableCell>
-                  <TableCell>R$ {row.gain}</TableCell>
+                  <TableCell>R$ {row.gain?.toFixed(2)}</TableCell>
                   <TableCell>
                     <IconButton
                       size="small"
@@ -153,7 +155,6 @@ export const ListProduct: React.FC = () => {
 
                     <IconButton
                       size="small"
-                      // handleOpen
                       onClick={() => navigate(`/product/details/${row.id}`)}
                     >
                       <Icon>edit</Icon>

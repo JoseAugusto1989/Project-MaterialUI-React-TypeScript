@@ -23,7 +23,7 @@ type TTotalCountPerson = {
 const getAll = async (page = 1, filter = ''): Promise<TTotalCountPerson | Error> => {
   try {
     const urlRelative = `/people?_page=${page}&_limit=${Environment.LIMIT_OF_LINES}&completeName_like=${filter}`;
-    const { data, headers } = await API.get(urlRelative);
+    const { data, headers } = await API().get(urlRelative);
     console.log('data', data, headers);
     if (data) {
       return {
@@ -42,7 +42,7 @@ const getAll = async (page = 1, filter = ''): Promise<TTotalCountPerson | Error>
 
 const getById = async (id: number): Promise<IPersonDetail | Error> => {
   try {
-    const { data } = await API.get(`/people/${id}`);
+    const { data } = await API().get(`/people/${id}`);
 
     if (data) {
       return data;
@@ -57,7 +57,7 @@ const getById = async (id: number): Promise<IPersonDetail | Error> => {
 
 const create = async (dados: Omit<IPersonDetail, 'id'>): Promise<number | Error> => {
   try {
-    const { data } = await API.post<IPersonDetail>('/people/addPeople', dados);
+    const { data } = await API().post<IPersonDetail>('/people/addPeople', dados);
     
     if (data) {
       return data.id;
@@ -72,7 +72,7 @@ const create = async (dados: Omit<IPersonDetail, 'id'>): Promise<number | Error>
 
 const updateById = async (id: number, dados: IPersonDetail): Promise<void | Error> => {
   try {
-    await API.put(`/people/${id}`, dados);
+    await API().put(`/people/${id}`, dados);
    
   } catch (error) {
     console.error(error);
@@ -82,7 +82,7 @@ const updateById = async (id: number, dados: IPersonDetail): Promise<void | Erro
 
 const deleteById = async (id: number): Promise<void | Error> => {
   try {
-    await API.delete(`/people/${id}`);
+    await API().delete(`/people/${id}`);
     console.log('Teste de delete');
        
   } catch (error) {

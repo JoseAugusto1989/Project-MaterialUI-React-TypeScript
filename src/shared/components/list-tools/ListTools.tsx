@@ -1,5 +1,4 @@
 import { Box, Button, Icon, Paper, TextField, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 import { Environment } from '../../environments';
 
