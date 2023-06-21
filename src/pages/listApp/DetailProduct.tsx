@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,12 +15,11 @@ const formValidationSchema: yup.SchemaOf<IProduct> = yup.object().shape({
   name: yup.string().required().min(3),
   id: yup.mixed().optional(),
   gain: yup.number().optional(),
-  code: yup.string().required(),
   provider: yup.string().required().min(3),
   // TODO: verificar o yup dos inputs que recebem numeros
   addedAmount: yup.number().required().positive().integer(),
   purchasePrice: yup.number().required().positive(),
-  quantityInStock: yup.number().required().positive().integer() ,
+  quantityInStock: yup.mixed().optional(),
   salePrice: yup.number().required().positive(),
 });
 
@@ -41,7 +41,6 @@ export const DetailProduct: React.FC = () => {
           setIsLoading(false);
 
           if (result instanceof Error) {
-            alert(result.message);
             navigate('/product');
 
           } else {
@@ -59,7 +58,6 @@ export const DetailProduct: React.FC = () => {
         name: '',
         quantityInStock: '',
         salePrice: '',
-        code: '',
         provider: '',
         purchasePrice: '',
         addedAmount: '',
@@ -78,7 +76,6 @@ export const DetailProduct: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
 
             } else {
               if (isSaveAndClose()) {
@@ -97,7 +94,7 @@ export const DetailProduct: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              
 
             } else {
               if (isSaveAndClose()) {
@@ -126,7 +123,7 @@ export const DetailProduct: React.FC = () => {
     if (confirm('Realmente deseja apagar?')) {
       ProductService.delete(id).then((result) => {
         if (result instanceof Error) {
-          alert(result.message);
+          
         } else {
           alert('Registro apagado com sucesso!');
           navigate('/product');
@@ -176,16 +173,6 @@ export const DetailProduct: React.FC = () => {
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField 
-                    label="Código" 
-                    name="code" 
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField 
                     label="Fornecedor" 
                     name="provider" 
                     disabled={isLoading}
@@ -193,7 +180,7 @@ export const DetailProduct: React.FC = () => {
                 </Grid>
               </Grid>
             
-              <Grid container item direction="row" spacing={2}>
+              {/* <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     label="Qtd. Estoque" 
@@ -201,7 +188,7 @@ export const DetailProduct: React.FC = () => {
                     disabled={isLoading}
                   />
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Grid>
           
             <Grid container direction="column" padding={4} spacing={2}>

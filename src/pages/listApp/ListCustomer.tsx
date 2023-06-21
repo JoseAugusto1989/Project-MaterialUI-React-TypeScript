@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import {
   Icon,
   IconButton,
@@ -70,7 +71,6 @@ export const ListCustomer: React.FC = () => {
       CustomerService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
-            alert(result.message);
           
           } else {
             setRows((oldRows) => [
@@ -88,7 +88,7 @@ export const ListCustomer: React.FC = () => {
         title="Listagem de Clientes"
         toolbar={
           <ListTools
-            showSearchInput
+            // showSearchInput
             newButtonText="Novo"
             searchText={search}
             clickInNew={() => navigate('/customer/details/new')}
@@ -136,21 +136,14 @@ export const ListCustomer: React.FC = () => {
                     >
                       <Icon>edit</Icon>
                     </IconButton>
-
-                    <IconButton 
-                      size='small'
-                      // onClick={}
-                    >
-                      <Icon>message</Icon>
-                    </IconButton>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
 
-            {totalCount === 0 && !isLoading && (
+            {/* {totalCount === 0 && !isLoading && (
               <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+            )} */}
 
             <TableFooter>
 

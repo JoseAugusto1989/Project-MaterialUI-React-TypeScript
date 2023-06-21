@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Icon,
@@ -65,7 +66,6 @@ export const ListProvider: React.FC = () => {
       ProviderService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
-            alert(result.message);
         
           } else {
             setRows((oldRows) => [
@@ -83,7 +83,7 @@ export const ListProvider: React.FC = () => {
         title="Listagem de fornecedores"
         toolbar={
           <ListTools
-            showSearchInput
+            // showSearchInput
             newButtonText="Novo"
             searchText={search}
             clickInNew={() => navigate('/provider/details/new')}
@@ -144,9 +144,9 @@ export const ListProvider: React.FC = () => {
               ))}
             </TableBody>
 
-            {totalCount === 0 && !isLoading && (
+            {/* {totalCount === 0 && !isLoading && (
               <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+            )} */}
 
             <TableFooter>
               {totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES && (

@@ -1,22 +1,21 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
   Icon,
   IconButton,
-  LinearProgress,
   Modal,
-  Pagination,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { IProduct } from '../../interfaces';
 import { ListTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { ProductModal } from '../../shared/components/modals/modal/ProductModal';
@@ -25,7 +24,6 @@ import { useDebounce } from '../../shared/hooks';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import ProductService from '../../shared/services/api/product/ProductService';
 import usePagination from './helpers/Pagination';
-import { IProduct } from '../../interfaces';
 
 export const ListProduct: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -78,7 +76,6 @@ export const ListProduct: React.FC = () => {
       ProductService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
-            alert(result.message);
 
           } else {
             setRows((oldRows) => [
@@ -96,7 +93,7 @@ export const ListProduct: React.FC = () => {
         title="Listagem de produtos"
         toolbar={
           <ListTools
-            showSearchInput
+            // showSearchInput
             newButtonText="Novo"
             searchText={search}
             clickInNew={() => navigate('/product/details/new')}
@@ -160,29 +157,23 @@ export const ListProduct: React.FC = () => {
                       <Icon>edit</Icon>
                     </IconButton>
 
-                    { row.quantityInStock < 10 && (<IconButton size="small">
-                      <Icon>message</Icon>
-                    </IconButton>)}
-                    <Modal
-                      open={open}
-                      onClose={handleClose}
-                      aria-labelledby="modal-modal-title"
-                      aria-describedby="modal-modal-description"
-                    >
-                      <ProductModal />
-                    </Modal>
+                    { row.quantityInStock < 10 && (
+                      <IconButton 
+                        size="small"
+                        onClick={() => navigate('/sendEmailProvider')}
+                      >
+                        <Icon>message</Icon>
+                      </IconButton>)}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
 
-            {totalCount === 0 && !isLoading && (
+            {/* {totalCount === 0 && !isLoading && (
               <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+            )} */}
 
-            <TableFooter>
-              {/* inicio paginação */}
-
+            {/* <TableFooter>
               {isLoading && (
                 <TableRow>
                   <TableCell colSpan={6}>
@@ -203,7 +194,7 @@ export const ListProduct: React.FC = () => {
                   />
                 </TableCell>
               </TableRow>
-            </TableFooter>
+            </TableFooter> */}
           </Table>
         </TableContainer>
       </LayoutPageBase>

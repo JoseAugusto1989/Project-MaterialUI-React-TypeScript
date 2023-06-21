@@ -36,7 +36,6 @@ export const NewRegister = () => {
 
     if (status !== 202) {
       console.log('Error...', data);  
-      alert('Algo de errado com o seu cadastro!');
     }
   };
 
@@ -102,8 +101,8 @@ export const NewRegister = () => {
                 })}
               >
                 <option value='0'>Selecione a sua profissão</option>
-                <option value='developer'>Desenvolvedor</option>
-                <option value='student'>Estudante</option>
+                <option value='saler'>Vendedor</option>
+                <option value='stoke'>Estoquista</option>
                 <option value='other'>Outros</option>
         
               </Select>

@@ -48,11 +48,11 @@ export const AppRoutes = () => {
         path: '/sales',
         icon: 'article',
       },
-      {
-        label: 'Relatórios Vendas',
-        path: '/report',
-        icon: '',
-      }
+      // {
+      //   label: 'Relatórios Vendas',
+      //   path: '/report',
+      //   icon: '',
+      // }
     ]);
   }, []);
 

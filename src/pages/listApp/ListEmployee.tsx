@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { Icon, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -49,7 +50,6 @@ export const ListEmployee: React.FC = () => {
       EmployeeService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
-            alert(result.message);
 
           } else {
             setRows((oldRows) => [
@@ -67,7 +67,7 @@ export const ListEmployee: React.FC = () => {
         title="Listagem de funcionários"
         toolbar={
           <ListTools
-            showSearchInput
+            // showSearchInput
             newButtonText="Novo"
             searchText={search}
             clickInNew={() => navigate('/employee/details/new')}
@@ -90,7 +90,6 @@ export const ListEmployee: React.FC = () => {
                 <TableCell>Telefone</TableCell>
                 <TableCell>Função</TableCell>
                 <TableCell>Salario</TableCell>
-                <TableCell>Bonificação</TableCell>
                 <TableCell>Data de inicio</TableCell>
                 <TableCell>Ações</TableCell>
               </TableRow>
@@ -104,7 +103,6 @@ export const ListEmployee: React.FC = () => {
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>{row.job}</TableCell>
                   <TableCell>R$ {row.salary.toFixed(2)}</TableCell>
-                  <TableCell>% {row.bonus}</TableCell>
                   <TableCell>{new Date(row.initialDate).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <IconButton

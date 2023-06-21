@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import {
   Icon,
   IconButton,
@@ -59,7 +60,6 @@ export const ListSales: React.FC = () => {
       SalesService.delete(id)
         .then((result) => {
           if (result instanceof Error) {
-            alert(result.message);
         
           } else {
             setRows((oldRows) => [
@@ -77,7 +77,7 @@ export const ListSales: React.FC = () => {
         title="Listagem de vendas"
         toolbar={
           <ListTools
-            showSearchInput
+            // showSearchInput
             newButtonText="Nova"
             clickInNew={() => navigate('/sales/details/new')}
             changeSearchText={(text) =>
@@ -135,9 +135,9 @@ export const ListSales: React.FC = () => {
               ))}
             </TableBody>
 
-            {totalCount === 0 && !isLoading && (
+            {/* {totalCount === 0 && !isLoading && (
               <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+            )} */}
 
             <TableFooter>
               {totalCount > 0 && totalCount > Environment.LIMIT_OF_LINES && (

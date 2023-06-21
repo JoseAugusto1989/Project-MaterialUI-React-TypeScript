@@ -35,7 +35,6 @@ export interface IProduct {
   id: number;
   name: string;
   salePrice: number;
-  code: string;
   purchasePrice: number;
   gain?: number;
   quantityInStock: number;
@@ -48,7 +47,7 @@ export interface IProvider {
   id: number;
   name: string;
   lastName: string;
-  phone: number;
+  phone: string;
   email: string;
   companyName: string;
   cnpj: string;
@@ -59,7 +58,6 @@ export interface ISales {
   employee: string;
   unitPrice: number;
   totalPrice: number;
-  code: string;
   quantity: number;
   dateSale: Date;
   customer: string;

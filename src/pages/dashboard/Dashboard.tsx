@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -29,7 +30,7 @@ export const Dashboard = () => {
         setIsLoadingProduct(false);
 
         if (result instanceof Error) {
-          alert(result.message);
+          
         } else {
           setRows(result.data.content);
         }
@@ -40,7 +41,7 @@ export const Dashboard = () => {
         setIsLoadingEmployee(false);
 
         if (result instanceof Error) {
-          alert(result.message);
+        
         } else {
           setEmployee(result.data.content);
         }

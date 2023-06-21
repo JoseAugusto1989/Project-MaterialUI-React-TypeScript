@@ -10,6 +10,7 @@ import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { IVFormErrors, useVForm, VForm, VTextField } from '../../shared/forms';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import EmployeeService from '../../shared/services/api/employee/EmployeeService';
+import { PhoneMask } from '../../shared/forms/PhoneMask';
 
 const formSchema: yup.SchemaOf<IEmployee> = yup.object().shape({
   id: yup.mixed().optional(),
@@ -116,7 +117,7 @@ export const DetailEmployee: React.FC = () => {
   return (
     <LateralMenu>
       <LayoutPageBase 
-        title={id === 'new' ? 'Novo Cliente' : `Cliente: ${name}`}
+        title={id === 'new' ? 'Novo Funcionário' : `Cliente: ${name}`}
         toolbar={
           <DetailTools 
             textButtonNew="Novo"
@@ -162,10 +163,9 @@ export const DetailEmployee: React.FC = () => {
 
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
+                  <PhoneMask
                     label="Telefone" 
                     name="phone"  
-                    disabled={isLoading}
                   />
                 </Grid>
               </Grid>

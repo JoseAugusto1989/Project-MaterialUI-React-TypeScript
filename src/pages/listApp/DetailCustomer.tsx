@@ -1,5 +1,5 @@
 /* eslint-disable no-empty */
-import { Box, Grid, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, FormControlLabel, Grid, LinearProgress, Paper, Radio, RadioGroup, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
@@ -8,19 +8,19 @@ import { ICustomer } from '../../interfaces';
 import { DetailTools } from '../../shared/components';
 import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { IVFormErrors, VForm, VTextField } from '../../shared/forms';
+import { PhoneMask } from '../../shared/forms/PhoneMask';
 import { useVForm } from '../../shared/forms/useVForm';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import CustomerService from '../../shared/services/api/customer/CustomerService';
-
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-
+import { CnpjMask } from '../../shared/forms/CnpjMask';
+import { CpfMask } from '../../shared/forms/CpfMask';
 
 const formValidationSchema: yup.SchemaOf<ICustomer> = yup.object().shape({
   name: yup.string().required().min(3),
   lastName: yup.string().required().min(3),
   id: yup.mixed().optional(),
   email: yup.string().required().email(),
-  phone: yup.string().required().matches(phoneRegExp, 'Este telefone não é um número válido'),
+  phone: yup.string().required(),
   address: yup.string().required().min(3),
   // TODO: Ajustar a validação para CPF ou CNPJ
   cpf: yup.string().required(),
@@ -35,6 +35,7 @@ const formValidationSchema: yup.SchemaOf<ICustomer> = yup.object().shape({
 export const DetailCustomer: React.FC = () => {
   const { id = 'new' } = useParams<'id'>();
   const navigate = useNavigate();
+  const [documentType, setDocumentType] = useState('cpf');
 
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
@@ -74,6 +75,10 @@ export const DetailCustomer: React.FC = () => {
       });
     }
   }, []);
+
+  const handleDocumentTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDocumentType(event.target.value);
+  };
 
   const handleSave = (data: ICustomer) => {
     formValidationSchema.
@@ -192,10 +197,9 @@ export const DetailCustomer: React.FC = () => {
 
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
-                    label="Telefone" 
-                    name="phone"  
-                    disabled={isLoading}
+                  <PhoneMask 
+                    name='phone'
+                    label='Telefone'
                   />
                 </Grid>
               </Grid>
@@ -208,30 +212,30 @@ export const DetailCustomer: React.FC = () => {
                     disabled={isLoading}
                   />
                 </Grid>
-              </Grid>
-
-              
+              </Grid>            
 
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
-                    label="CPF" 
-                    name="cpf"  
-                    disabled={isLoading}
-                  />
+                  <RadioGroup row value={documentType} onChange={handleDocumentTypeChange}>
+                    <FormControlLabel value="cpf" control={<Radio />} label="CPF" />
+                    <FormControlLabel value="cnpj" control={<Radio />} label="CNPJ" />
+                  </RadioGroup>
                 </Grid>
               </Grid>
-
-              {/* TODO: validar CPF e CNPJ com um checkbutton */}
-              
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField
-                    label="CNPJ" 
-                    name="cnpj"  
+              <Grid item xs={12} sm={12} md={6} lg={4} xl={1}>
+                {documentType === 'cpf' ? (
+                  <CpfMask
+                    label="CPF"
+                    name="cpf"
                     disabled={isLoading}
                   />
-                </Grid>
+                ) : (
+                  <CnpjMask
+                    label="CNPJ"
+                    name="cpf"
+                    disabled={isLoading}
+                  />
+                )}
               </Grid>
             </Grid>
 

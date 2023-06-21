@@ -35,13 +35,11 @@ export const FormEmailProvider = () => {
           })
           .catch(error => {
             console.error('Error...', error);
-            alert('Ocorreu um erro ao enviar o email!');
           });
   
       })
       .catch(error => {
         console.error('Error...', error);
-        alert('Ocorreu um erro ao salvar seu email!');
       });
   };
 

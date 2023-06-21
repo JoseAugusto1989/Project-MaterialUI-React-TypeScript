@@ -10,6 +10,8 @@ import LateralMenu from '../../shared/components/lateral-menu/LateralMenu';
 import { IVFormErrors, useVForm, VForm, VTextField } from '../../shared/forms';
 import LayoutPageBase from '../../shared/layouts/LayoutPageBase';
 import ProviderService from '../../shared/services/api/provider/ProviderService';
+import { CnpjMask } from '../../shared/forms/CnpjMask';
+import { PhoneMask } from '../../shared/forms/PhoneMask';
 
 const formValidateSchema: yup.SchemaOf<IProvider> = yup.object().shape({
   id: yup.mixed().optional(),
@@ -17,7 +19,7 @@ const formValidateSchema: yup.SchemaOf<IProvider> = yup.object().shape({
   lastName: yup.string().required(),
   email: yup.string().email().required(),
   cnpj: yup.string().required(),
-  phone: yup.number().required(),
+  phone: yup.string().required(),
   companyName: yup.string().required(),
 });
 
@@ -158,20 +160,26 @@ export const DetailProvider: React.FC = () => {
                 </Grid>
               </Grid>   
 
-              <Grid container item direction="row" spacing={2}>
+              {/* <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  {/* <VMaskTextField
-                    name="cnpj"
-                    label="CNPJ" 
-                    mask="99.999.999/9999-99"
-                  /> */}
                   <VTextField 
                     label="CNPJ" 
                     name="cnpj" 
                     disabled={isLoading}
                   />
                 </Grid>
-              </Grid>      
+              </Grid>     */}
+
+              <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <CnpjMask 
+                    label="CNPJ"
+                    name="cnpj"
+                  /> 
+                </Grid>
+              </Grid>    
+
+               
 
               {/* TODO: autocomplete de funcionarios */}
 
@@ -201,13 +209,22 @@ export const DetailProvider: React.FC = () => {
 
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
+                  <PhoneMask 
+                    name='phone'
+                    label='Telefone'
+                  />
+                </Grid>
+              </Grid>
+
+              {/* <Grid container item direction="row" spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
                   <VTextField
                     name="phone" 
                     label="Telefone" 
                     disabled={isLoading}
                   />
                 </Grid>
-              </Grid>
+              </Grid> */}
               
               <Grid container item direction="row" spacing={2}>
                 <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>

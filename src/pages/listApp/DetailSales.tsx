@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/ban-types */
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -16,7 +17,6 @@ const formSchema: yup.SchemaOf<ISales> = yup.object().shape({
   id: yup.mixed().optional(),
   employee: yup.string().required(),
   productName: yup.string().required(),
-  code: yup.string().required(),
   unitPrice: yup.number().required(),
   totalPrice: yup.mixed().optional(),
   quantity: yup.number().required(),
@@ -64,7 +64,6 @@ export const DetailSales = () => {
           setIsLoading(false);
 
           if (result instanceof Error) {
-            alert(result.message);
             navigate('/sales');
 
           } else {
@@ -84,7 +83,6 @@ export const DetailSales = () => {
         productName: '',
         totalPrice: '',
         quantity: '',
-        code: '',
         customer: '',
         dateSale: '',
         description: '',
@@ -104,7 +102,6 @@ export const DetailSales = () => {
             console.log('OK axios', result);
 
             if (result instanceof Error) {
-              alert(result.message);
               console.log('Erro', data);
 
             } else {
@@ -124,7 +121,6 @@ export const DetailSales = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
 
             } else {
               if (isSaveAndClose()) {
@@ -152,7 +148,7 @@ export const DetailSales = () => {
     if (confirm('Realmente deseja apagar?')) {
       SalesService.delete(id).then((result) => {
         if (result instanceof Error) {
-          alert(result.message);
+          
         } else {
           alert('Venda apagado com sucesso!');
           navigate('/sales');
@@ -201,16 +197,6 @@ export const DetailSales = () => {
                   <VTextField 
                     label="Nome do produto" 
                     name="productName" 
-                    disabled={isLoading}
-                  />
-                </Grid>
-              </Grid>
-
-              <Grid container item direction="row" spacing={2}>
-                <Grid item xs={12} sm={12} md={6} lg={4} xl={12}>
-                  <VTextField 
-                    label="Código do produto" 
-                    name="code" 
                     disabled={isLoading}
                   />
                 </Grid>
